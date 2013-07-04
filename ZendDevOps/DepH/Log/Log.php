@@ -11,7 +11,7 @@ class Log extends \Zend\Log\Logger{
      * 
      * @var string
      */
-    public static $logFilePath = '/usr/local/zend/var/log/app_deployment.php';
+    public static $logFilePath = '/usr/local/zend/var/log/app_deployment.log';
     
     /**
      * List of files which are excluded/not read in fullVerbose mode
@@ -35,6 +35,11 @@ class Log extends \Zend\Log\Logger{
      * @var boolean
      */
     private $firstTick = true;
+    
+    /**
+     * Flag for GUI Output, has to be enabled by method addGuiOutput()
+     */
+    private $guiOutputEnabled = false;
     
     /**
      * retrieves path of app specific log file
@@ -110,6 +115,8 @@ class Log extends \Zend\Log\Logger{
      * also displayed in case of an error/termination in the GUI
      */
     public function addGuiOutput() {
+    	if ($this->guiOutputEnabled) return;
+    	
         $existingWriters = $this->getWriters();
         $this->setWriters(new \Zend\Stdlib\SplPriorityQueue());
         $writer = new \Zend\Log\Writer\Stream('php://output');
@@ -127,6 +134,8 @@ class Log extends \Zend\Log\Logger{
         $this->info('*** Log of script ' . $this->currentActionScriptName . ' has been started in GUI mode ***');
         $existingWriters->insert($writer, 1);
         $this->setWriters($existingWriters);
+        
+        $this->guiOutputEnabled = true;
     }
     
     /**
