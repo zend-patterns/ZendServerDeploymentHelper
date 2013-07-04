@@ -60,6 +60,7 @@ class ServiceManager extends \Zend\ServiceManager\ServiceManager {
             $logger->setFullVerboseExcludeList(array(
                 '/ZendDevOps/',
                 '/ZendFramework2/',
+            	'/Zend_Framework_2/',
                 'deph.php'
             ));
             

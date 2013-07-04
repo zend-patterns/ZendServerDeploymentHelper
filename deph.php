@@ -10,8 +10,11 @@
 use \ZendDevOps\DepH\ServiceManager\ServiceManager as ZendDevOpsDepH;
 
 define('SCRIPT_ROOT', dirname(__FILE__));
-
-set_include_path('/usr/local/zend/share/ZendFramework2/library' . PATH_SEPARATOR . get_include_path());
+set_include_path(join(PATH_SEPARATOR, array(
+	'/usr/local/zend/share/ZendFramework2/library', // Zend Server 6.0
+	'/usr/local/zend/var/libraries/Zend_Framework_2/default/library', // Zend Server 6.1
+	get_include_path()
+)));
 require_once 'Zend/Loader/StandardAutoloader.php';
 
 $autoLoader = new \Zend\Loader\StandardAutoloader(array(

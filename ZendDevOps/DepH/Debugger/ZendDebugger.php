@@ -28,7 +28,7 @@ class ZendDebugger implements LogAwareInterface
      *  
      * @param string $clientIP
      */
-    public function start ($clientIP)
+    public function start ($clientIP, $port = 10137)
     {
         if (getenv('QUERY_STRING') != ''){
             $this->log->info('Please note: As the execution time of a Debugging sesion can take longer than the timout for the lighthttp (responsible for deployment execution), it can happen that the following stage is executed before the current stage has finished');
@@ -42,7 +42,7 @@ class ZendDebugger implements LogAwareInterface
             'start_debug' => 1,
             'debug_host' => $clientIP,
             'use_remote' => 1,
-            'debug_port' => 10137,
+            'debug_port' => $port,
             'debug_session_id' => rand(100000, 999999),
             'debug_fastfile' => 1,
             'debug_stop' => 1,
