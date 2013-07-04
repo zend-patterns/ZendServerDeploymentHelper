@@ -11,7 +11,7 @@ class Log extends \Zend\Log\Logger{
      * 
      * @var string
      */
-    public static $logFilePath = '/usr/local/zend/var/log/app_deployment.php';
+    public static $logFilePath = '/usr/local/zend/var/log/app_deployment.log';
     
     /**
      * List of files which are excluded/not read in fullVerbose mode
