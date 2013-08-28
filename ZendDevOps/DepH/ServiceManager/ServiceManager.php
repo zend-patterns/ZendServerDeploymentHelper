@@ -69,8 +69,10 @@ class ServiceManager extends \Zend\ServiceManager\ServiceManager {
         
         $this->setFactory('Path', function() use ($sm) {
             $params = $sm->get('Params');
+            $shell = $sm->get('Shell');
             $path = new \ZendDevOps\DepH\Path\Path();
             $path->setParams($params);
+            $path->setShell($shell);
             return $path;
         });
         

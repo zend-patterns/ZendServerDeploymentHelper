@@ -5,6 +5,7 @@
 namespace ZendDevOps\DepH\Path;
 
 use \ZendDevOps\DepH\Params\Params;
+use \ZendDevOps\DepH\SystemCall\Shell;
 
 class Path {
     const DIR_PREFIX = '/usr/local/zend';
@@ -18,10 +19,22 @@ class Path {
     private $params;
     
     /**
+     * @var \ZendDevOps\DepH\SystemCall\Shell
+     */
+    private $shell;
+    
+    /**
      * @param Params $params
      */
     public function setParams (Params $params) {
         $this->params = $params;            
+    }
+    
+    /**
+     * @param Shell $shell
+     */
+    public function setShell (Shell $shell) {
+        $this->shell = $shell;
     }
 
     /**
@@ -82,5 +95,77 @@ class Path {
         }
         
         return $path;
+    }
+    
+    /**
+     * returns the root path in which all of the application are being deployed.
+     * This dir is writable by user zend, used for persitent storage for all
+     * app versions.
+     *
+     * @return string
+     */
+    public function getAppsDir() {
+        return self::DIR_APPS;
+    }
+    
+    /**
+     * creates a dir with access rights for the web server user. $dir is
+     * set relative to document root.
+     * Be careful with app removement: deployment user cannot remove dirs
+     * that contain files written by the webserver user
+     * 
+     * @return string returns the absolute path of the dir
+     */
+    public function makeWritableDir($dir) {
+        $dir = $this->params->getApplicationBaseDir() . '/' . $dir;
+        $dir = str_replace('//', '/', $dir);
+        
+        $this->createWriteableDir($dir);
+        
+        return $dir;
+    }
+    
+    /**
+     * creates a dir with access rights for the web server user. $dir is
+     * set relative to document root as a link! Persistent dir is stoed 
+     * outside the app dir structure, so that it will not removed on app removal,
+     * but the data is also available for all versions.
+     * 
+     * @return array of absolute path of persistent dir and linked dir in app folder
+     */
+    public function makePersitentWritableDir($appName, $dir, $persitentDir = null) {
+        if (!$persitentDir) $persitentDir = $this->getAppsDir();
+        
+        $persitentDir .= "/$appName/$dir";
+        $persitentDir = str_replace('//', '/', $persitentDir);
+        
+        $dir = $this->params->getApplicationBaseDir() . '/' . $dir;
+        $dir = str_replace('//', '/', $dir);
+
+        $this->createWriteableDir($persitentDir);
+        
+        $this->shell->exec("ln -s $persitentDir $dir");
+        
+        return array(
+        	'persitentDir' => $persitentDir,
+            'linkedDir' => $dir
+        );
+    }
+    
+    /**
+     * actually executes the mkdir and permission actions.
+     * 
+     * @see ZendDevOps\DepH\Path::makeWritableDir
+     * @see ZendDevOps\DepH\Path::makePersitentWritableDir
+     * 
+     * @param string $dir
+     */
+    private function createWriteableDir($dir) {
+        $this->shell->exec("mkdir -p $dir");
+        
+        $gid = $this->params->getWebserverGid();
+        
+        $this->shell->exec("chown -R zend:$gid $dir");
+        $this->shell->exec("chmod -R 0775 $dir");
     }
 }
