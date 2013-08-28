@@ -11,5 +11,5 @@
     <eula>LICENSE.txt</eula>
     <libdir>src</libdir>
     <scriptsdir>_files</scriptsdir>
-    <updateurl>https://github.com/zendtech/ZendServerDeploymentHelper/deph.zpk</updateurl>
+    <updateurl>https://github.com/zendtech/ZendServerDeploymentHelper/raw/master/ZendServerDeploymentHelper.zpk</updateurl>
     </package>
