@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<package xmlns="http://www.zend.com/server/deployment-descriptor/1.0" version="1.0">
+  <type>library</type>
+    <name>ZendServerDeploymentHelper</name>
+    <summary>Zend Server Deployment Helper</summary>
+    <description>Zend Server Deployment Helper (DepH) is a Zend Framework 2 based set of classes which supports in creating reliable hook scripts of Zend Server Deployment feature.</description>
+    <version>
+        <release>1.0.1</release>
+    </version>
+    <icon>etc/logo.gif</icon>
+    <eula>LICENSE.txt</eula>
+    <libdir>src</libdir>
+    <scriptsdir>_files</scriptsdir>
+    <updateurl>https://github.com/zendtech/ZendServerDeploymentHelper/deph.zpk</updateurl>
+    </package>
