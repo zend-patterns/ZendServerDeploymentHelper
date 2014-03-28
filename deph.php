@@ -7,8 +7,6 @@
  * DepH Bootstrapping and desaster error handling
  */
 
-use \ZendDevOps\DepH\ServiceManager\ServiceManager as ZendDevOpsDepH;
-
 define('SCRIPT_ROOT', dirname(__FILE__));
 set_include_path(join(PATH_SEPARATOR, array(
 	'/usr/local/zend/share/ZendFramework2/library', // Zend Server 6.0
@@ -26,7 +24,9 @@ $autoLoader = new \Zend\Loader\StandardAutoloader(array(
 ));
 
 // register our StandardAutoloader with the SPL autoloader
-$autoLoader->register(); 
+$autoLoader->register();
+
+use \ZendDevOps\DepH\ServiceManager\ServiceManager as ZendDevOpsDepH;
 
 set_exception_handler(function(\Exception $exception) {
     global $GlobalDepH;
