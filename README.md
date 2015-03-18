@@ -161,7 +161,7 @@ $deployment->terminate('Because we have a good reason...');
 // init ...
 $params = $deph->get('ZSParams');
 // or for Sytax Highlighting
-$params = $depp->getParams();
+$params = $deph->getParams();
 echo $params->getApplicationBaseDir();
 echo $params->getCurrentAppVersion();
 echo $params->getPhpVersion();
