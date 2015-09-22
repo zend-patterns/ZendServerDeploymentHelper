@@ -80,22 +80,8 @@ class ServiceManager extends \Zend\ServiceManager\ServiceManager {
             $debugger = new \ZendDevOps\DepH\Debugger\ZendDebugger();
             $debugger->setDeployment($sm->get('Deployment'));
             return $debugger;
-        });
-        
-        $this->setFactory('Vhost', function () use ($sm) {
-            $vhost = new \ZendDevOps\DepH\Vhost\Vhost();
-            $vhost->setEventManager($sm->get('EventManager'));
-            $vhost->setShell($sm->get('Shell'));
-            $vhost->setPath($sm->get('Path'));
-            $vhost->setTemplate($sm->get('Template'));
-            $vhost->setDeployment($sm->get('Deployment'));
-            
-            $vhost->getEventManager()->attach('write', array($vhost, 'allowedToWrite'));
-            $vhost->getEventManager()->attach('finalize', array($vhost, 'preparingFinalize'));
-
-            return $vhost;
-        });
-        
+        });       
+ 
         $this->setInvokableClass('MysqliFactory', '\ZendDevOps\DepH\Db\MysqliFactory');
         $this->setFactory('DB', $sm->get('MysqliFactory'));
         
@@ -112,12 +98,6 @@ class ServiceManager extends \Zend\ServiceManager\ServiceManager {
         $logger->setCurrentActionScriptName($action);
         
         $params->setDeployment($deployment);
-        
-        $vhost = $sm->get('Vhost');
-        if (is_file($vhost->getCustomVhostAwareFile()) &&
-            $deployment->isPostActivateAction()) {
-            $vhost->finalize();
-        }
     }
     
     /**

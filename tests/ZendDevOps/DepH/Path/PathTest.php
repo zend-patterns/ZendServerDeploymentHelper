@@ -53,7 +53,7 @@ class PathTest extends PHPUnit_Framework_TestCase
         if (is_dir($this->tmpTestDir)) {
             deleteDir($this->tmpTestDir);
         }
-        mkdir($this->tmpTestDir);
+        mkdir($this->tmpTestDir, 0777, true);
     }
 
     /**

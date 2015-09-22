@@ -11,8 +11,6 @@ require_once 'DepH/PathSuite.php';
 
 require_once 'DepH/SystemCallSuite.php';
 
-require_once 'DepH/VhostSuite.php';
-
 /**
  * Static test suite.
  */
@@ -35,8 +33,6 @@ class DepHSuite extends PHPUnit_Framework_TestSuite
         $this->addTestSuite('PathSuite');
         
         $this->addTestSuite('SystemCallSuite');
-        
-        $this->addTestSuite('VhostSuite');
     }
 
     /**
