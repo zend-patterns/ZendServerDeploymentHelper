@@ -46,7 +46,7 @@ class ShellTest extends PHPUnit_Framework_TestCase
             }
             rmdir($this->tmpTestDir);
         }
-        mkdir($this->tmpTestDir);
+        mkdir($this->tmpTestDir, 0777, true);
     }
 
     /**
