@@ -15,16 +15,6 @@
  * the use of composer completely optional. This setup should work fine for
  * most users, however, feel free to configure autoloading however you'd like.
  */
- /*
-$autoLoader = new \Zend\Loader\StandardAutoloader(array(
-    'namespaces' => array(
-        'ZendDevOps\DepH' => __DIR__ . '/ZendDevOps/DepH',
-    ),
-
-    'fallback_autoloader' => true,
-));
-*/
-
 
 // Composer autoloading
 if (file_exists('vendor/autoload.php')) {
@@ -35,7 +25,7 @@ if (class_exists('Zend\Loader\AutoloaderFactory')) {
     $config = array(
         'Zend\Loader\StandardAutoloader' => array(
             'namespaces' => array(
-                'ZendDevOps\DepH' => __DIR__ . '/ZendDevOps/DepH'
+                'ZendServer\DepH' => __DIR__ . '/ZendServer/DepH'
             ),
         ),
     );
