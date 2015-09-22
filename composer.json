@@ -1,0 +1,12 @@
+{
+  "name" : "ZendServerDeploymentHelper",
+  "require" : {
+    "zendframework/zendframework" : "=2.4.8",
+    "phpunit/phpunit" : "=3.7.32",
+    "mockery/mockery" : "=0.9.4"
+  },
+  "repositories" : [ {
+    "type" : "composer",
+    "url" : "https://packagist.org/"
+  } ]
+}
