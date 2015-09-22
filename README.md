@@ -75,12 +75,6 @@ to be installed on the server in order to use this feature.
 DB credentials can be taken automatically from Zend Server user 
 constants if set in the following format: DB_USERNAME, DB_PASSWORD, DB_DATABASE, DB_HOSTNAME
 
-### Vhost
-Custom Vhost files can be set in a deployment package. These custom 
-vhost files overwrite the default Zend Server vhost files. Vhost files 
-can only be written in pre_activate.php.
-Template Vhost file available in the package is necessary.
-
 ## Installation 
 Directory Zx and deph.php have to placed in the same directory as the 
 hook script, so of course they have to be included in the deployment 
@@ -238,17 +232,3 @@ $db = $deph->getDb();
 $db->importCl('tpl/mydatabase.sql', array('#value1#', '#value2#'), array('abc', 'xyz'));
 ```
 Please note that MySQL client has to be installed.
-
-### Vhost
-```
-<?php
-// init ...
-$vhost = $deph->get('Vhost');
-// or for Sytax Highlighting
-$vhost = $deph->getVhost();
-$vhost->write('tpl/nginx_vhost.tpl', array('replaceMe'), array('withMe));
-```
-
-Please note that this is only available in pre_activate.php. 
-Additionally $deph has to be initialized in post_activate.php in order 
-to clean up.
