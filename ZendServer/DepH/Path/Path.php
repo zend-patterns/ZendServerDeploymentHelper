@@ -160,7 +160,7 @@ class Path {
      * 
      * @param string $dir
      */
-    private function createWriteableDir($dir) {
+    public function createWriteableDir($dir) {
         $this->shell->exec("mkdir -p $dir");
         
         $gid = $this->params->getWebserverGid();
