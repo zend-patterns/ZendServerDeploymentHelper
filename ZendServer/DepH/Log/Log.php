@@ -14,6 +14,13 @@ class Log extends \Zend\Log\Logger{
     public static $logFilePath = '/usr/local/zend/var/log/app_deployment.log';
     
     /**
+     * Default path for logging on IBM i
+     *
+     * @var string
+     */
+    public static $logFilePathI5 = '/usr/local/zendsvr6/var/log/app_deployment.log';
+    
+    /**
      * List of files which are excluded/not read in fullVerbose mode
      * @var array
      */
@@ -42,6 +49,19 @@ class Log extends \Zend\Log\Logger{
     private $guiOutputEnabled = false;
     
     /**
+     * retrieves path of default log file path depending on OS
+     *
+     * @return string
+     */
+    public static function getDefaultLogFilePath() {
+        if (strpos(php_uname(), "OS400") !== false) {
+            return self::$logFilePathI5;
+        }
+        
+        return self::$logFilePath;
+    } 
+    
+    /**
      * retrieves path of app specific log file
      * 
      * @param string $appName
@@ -53,7 +73,7 @@ class Log extends \Zend\Log\Logger{
         $appName = $filter->filter($appName);
         $replace = 'app_' . strtolower($appName) . '_' . strtolower($appVersion) . '_';
         
-        return str_replace('app_', $replace, self::$logFilePath);        
+        return str_replace('app_', $replace, self::getDefaultLogFilePath());        
     }
     
     /**
