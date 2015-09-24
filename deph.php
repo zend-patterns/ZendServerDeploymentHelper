@@ -13,7 +13,7 @@ chdir(__DIR__);
 // Setup autoloading
 require 'init_autoloader.php';
 
-use \ZendDevOps\DepH\ServiceManager\ServiceManager as ZendDevOpsDepH;
+use \ZendServer\DepH\ServiceManager\ServiceManager as ZendServerDepH;
 
 set_exception_handler(function(\Exception $exception) {
     global $GlobalDepH;
@@ -30,7 +30,7 @@ set_exception_handler(function(\Exception $exception) {
 
 $GlobalDepH;
 
-class DepH extends ZendDevOpsDepH{
+class DepH extends ZendServerDepH{
     public function __construct($displayErrors = true) {
         global $GlobalDepH;
         if ($displayErrors) ini_set('display_errors', 'on');
