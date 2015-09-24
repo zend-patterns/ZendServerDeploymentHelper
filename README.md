@@ -203,7 +203,7 @@ echo $shell->exec('ls -la /tmp');
 $template = $deph->get('Template');
 // or for Sytax Highlighting
 $template = $deph->getTemplate();
-$template->useIt('tpl/test.txt', '/tmp/test.txt', array('abc', 'xyz'), array(123, 456));
+$template->write('tpl/test.txt', '/tmp/test.txt', array('abc', 'xyz'), array(123, 456));
 $content = $template->dryRun('tpl/test.txt', '/tmp/test2.txt', array('abc', 'xyz'), array(123, 456));
 print_r($content);
 ```
