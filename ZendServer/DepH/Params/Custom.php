@@ -17,10 +17,8 @@ class Custom extends AbstractParamsContainer {
         // @todo do we need event manager in this class?
         #$this->getEventManager()->trigger(__FUNCTION__, $this, array('name' => 'ZS_CUSTOM_APPLICATION_NAME'));
         $url = getenv('ZS_BASE_URL');
-        // @todo doesn't work properly when installing from command line, produces sth. like http\\://hostname
-        $url = str_replace(array('http\\:', 'https\\:'), array('http:', 'https:'), $url);
-	    $serverName = str_replace('http://', '', $url);
-	    return str_replace('/', '_', rtrim($serverName, '/'));
+        $urlParts = explode(':', $url);
+	    return str_replace('/', '_', trim($urlParts[1], '/'));
     }
     
     /**
