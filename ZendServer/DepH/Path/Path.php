@@ -181,8 +181,9 @@ class Path {
         $this->shell->exec("mkdir -p $dir");
         
         $gid = $this->params->getWebserverGid();
+        $uid = $this->params->getWebserverUid();
         
-        $this->shell->exec("chown -R zend:$gid $dir");
+        $this->shell->exec("chown -R $uid:$gid $dir");
         $this->shell->exec("chmod -R 0775 $dir");
     }
 }
