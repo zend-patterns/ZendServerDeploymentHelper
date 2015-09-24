@@ -11,6 +11,11 @@ class Path {
     const DIR_PREFIX = '/usr/local/zend';
     const DIR_APPS = '/usr/local/zend/var/apps';
     const SITES_D_DIR = '/usr/local/zend/etc/sites.d';
+    
+    const DIR_PREFIX_I5 = '/usr/local/zendsvr6';
+    const DIR_APPS_I5 = '/usr/local/zendsvr6/var/apps';
+    const SITES_D_DIR_I5 = '/usr/local/zendsvr6/etc/sites.d';
+    
     const DEFAULT_VHOST_FILENAME = 'zend-default-vhost-80.conf'; 
     
     /**
@@ -36,6 +41,14 @@ class Path {
     public function setShell (Shell $shell) {
         $this->shell = $shell;
     }
+    
+    public function getSitesDDir() {
+        if (strpos(php_uname(), "OS400") !== false) {
+            return self::SITES_D_DIR_I5;
+        }
+        
+        return self::SITES_D_DIR;
+    }
 
     /**
      * Returns filename of original Zend Server vhost file
@@ -45,14 +58,14 @@ class Path {
         $applicationBaseDir = $this->params->getApplicationBaseDir();
        
         if (strpos($applicationBaseDir, '__default__') > 0) {
-            return self::SITES_D_DIR. '/' . self::DEFAULT_VHOST_FILENAME;
+            return $this->getSitesDDir() . '/' . self::DEFAULT_VHOST_FILENAME;
         }
         
     	$virtualHostFile = str_replace(self::DIR_APPS, '', $applicationBaseDir);
     	$virtualHostFile = str_replace($this->params->getCurrentAppVersion(), '', $virtualHostFile);
     	$virtualHostFile = trim(rtrim($virtualHostFile, '/'));
     	$virtualHostFile = str_replace('/', '_', $virtualHostFile) . '.conf';
-    	$virtualHostFile = self::SITES_D_DIR. '/vhost' . $virtualHostFile;
+    	$virtualHostFile = $this->getSitesDDir() . '/vhost' . $virtualHostFile;
     	
     	return $virtualHostFile;
     }
@@ -105,6 +118,10 @@ class Path {
      * @return string
      */
     public function getAppsDir() {
+        if (strpos(php_uname(), "OS400") !== false) {
+            return self::DIR_APPS_I5;
+        }
+        
         return self::DIR_APPS;
     }
     
