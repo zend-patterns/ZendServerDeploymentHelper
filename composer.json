@@ -1,7 +1,9 @@
 {
   "name" : "ZendServerDeploymentHelper",
   "require" : {
-    "zendframework/zendframework" : "=2.4.8",
+    "zendframework/zendframework" : "=2.4.8"
+  },
+  "require-dev": {
     "phpunit/phpunit" : "=3.7.32",
     "mockery/mockery" : "=0.9.4"
   },
