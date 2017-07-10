@@ -1,5 +1,5 @@
 {
-  "name" : "ZendServerDeploymentHelper",
+  "name" : "zend-pattern/ZendServerDeploymentHelper",
   "require" : {
     "zendframework/zendframework" : "=2.4.8",
     "phpunit/phpunit" : "=3.7.32",
