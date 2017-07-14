@@ -6,6 +6,7 @@
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
          beStrictAboutOutputDuringTests="true"
+         strict="true"
          forceCoversAnnotation="false"
          stopOnError="false"
          stopOnFailure="false"
