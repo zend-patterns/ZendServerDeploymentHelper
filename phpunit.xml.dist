@@ -15,19 +15,19 @@
          colors="false">
     <testsuites>
         <!--<testsuite name="Zend Server DepH Deployment Suite">-->
-            <!--<directory>./tests/Deployment</directory>-->
+        <!--<directory>./tests/Deployment</directory>-->
         <!--</testsuite>-->
         <!--<testsuite name="Zend Server DepH File Suite">-->
-            <!--<directory>./tests/File</directory>-->
+        <!--<directory>./tests/File</directory>-->
         <!--</testsuite>-->
         <!--<testsuite name="Zend Server DepH Params Suite">-->
-            <!--<directory>./tests/Params</directory>-->
+        <!--<directory>./tests/Params</directory>-->
         <!--</testsuite>-->
         <!--<testsuite name="Zend Server DepH Path Suite">-->
-            <!--<directory>./tests/Path</directory>-->
+        <!--<directory>./tests/Path</directory>-->
         <!--</testsuite>-->
         <!--<testsuite name="Zend Server DepH SystemCall Suite">-->
-            <!--<directory>./tests/SystemCall</directory>-->
+        <!--<directory>./tests/SystemCall</directory>-->
         <!--</testsuite>-->
         <testsuite name="Zend Server DepH Suite">
             <file>./tests/ZendServer/DepHSuite.php</file>

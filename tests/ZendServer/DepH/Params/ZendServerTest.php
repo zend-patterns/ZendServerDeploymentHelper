@@ -1,15 +1,15 @@
 <?php
-require_once dirname(dirname(dirname(dirname(__FILE__)))) . '/bootstrap.php';
+
+namespace ZendServerTest\DepH\Params;
 
 use \ZendServer\DepH\Params\ZendServer;
 use Zend\EventManager\EventManager;
-
-require_once 'PHPUnit/Framework/TestCase.php';
+use PHPUnit_Framework_TestCase as TestCase;
 
 /**
  * ZendServer test case.
  */
-class ZendServerTest extends PHPUnit_Framework_TestCase
+class ZendServerTest extends TestCase
 {
 
     /**

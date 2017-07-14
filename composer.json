@@ -7,6 +7,17 @@
     "phpunit/phpunit": "^4.8",
     "mockery/mockery": "=0.9.4"
   },
+  "autoload": {
+    "psr-4": {
+      "ZendServer\\DepH\\": "ZendServer/DepH"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "ZendServerTest\\DepH\\": "tests/ZendServer/DepH"
+    },
+    "classmap": ["tests/ZendServer/DepHSuite.php"]
+  },
   "scripts": {
     "test": "phpunit --colors=auto --no-coverage",
     "test-coverage": "phpunit --colors=auto --coverage-clover clover.xml",
