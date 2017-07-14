@@ -83,6 +83,9 @@ class Deployment implements EventManagerAwareInterface, LogAwareInterface{
         $stack = array_reverse(debug_backtrace(), true);
         
         foreach ($stack as $item) {
+            if (!isset($item['file'])) {
+                continue;
+            }
             $filename = basename($item['file']);
             if (false !== $key = array_search($filename, $this->actionScriptNames)) {
                 return $key;
