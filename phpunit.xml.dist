@@ -15,31 +15,28 @@
          verbose="true"
          colors="false">
     <testsuites>
-        <!--<testsuite name="Zend Server DepH Deployment Suite">-->
-        <!--<directory>./tests/Deployment</directory>-->
-        <!--</testsuite>-->
-        <!--<testsuite name="Zend Server DepH File Suite">-->
-        <!--<directory>./tests/File</directory>-->
-        <!--</testsuite>-->
-        <!--<testsuite name="Zend Server DepH Params Suite">-->
-        <!--<directory>./tests/Params</directory>-->
-        <!--</testsuite>-->
-        <!--<testsuite name="Zend Server DepH Path Suite">-->
-        <!--<directory>./tests/Path</directory>-->
-        <!--</testsuite>-->
-        <!--<testsuite name="Zend Server DepH SystemCall Suite">-->
-        <!--<directory>./tests/SystemCall</directory>-->
-        <!--</testsuite>-->
-        <testsuite name="Zend Server DepH Suite">
-            <file>./tests/ZendServer/DepHSuite.php</file>
+        <testsuite name="Zend Server DepH Deployment Suite">
+        <directory>./tests/Deployment</directory>
+        </testsuite>
+        <testsuite name="Zend Server DepH File Suite">
+        <directory>./tests/File</directory>
+        </testsuite>
+        <testsuite name="Zend Server DepH Params Suite">
+        <directory>./tests/Params</directory>
+        </testsuite>
+        <testsuite name="Zend Server DepH Path Suite">
+        <directory>./tests/Path</directory>
+        </testsuite>
+        <testsuite name="Zend Server DepH SystemCall Suite">
+        <directory>./tests/SystemCall</directory>
         </testsuite>
     </testsuites>
 
     <filter>
         <whitelist addUncoveredFilesFromWhitelist="true" processUncoveredFilesFromWhitelist="false">
-            <directory suffix=".php">ZendServer/DepH</directory>
+            <directory suffix=".php">src</directory>
             <exclude>
-                <directory suffix=".php">test/ZendServer/DepH</directory>
+                <directory suffix=".php">tests/</directory>
             </exclude>
         </whitelist>
     </filter>

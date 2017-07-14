@@ -42,13 +42,6 @@ class ParamsTest extends TestCase
     }
 
     /**
-     * Constructs the test case.
-     */
-    public function __construct ()
-    {
-    }
-
-    /**
      * Tests Params->setSharedManager()
      */
     public function testSetSharedManager ()
@@ -61,7 +54,7 @@ class ParamsTest extends TestCase
     /**
      * Tests Params->setSharedManager()
      * 
-     * @expectedException PHPUnit_Framework_Error
+     * @expectedException \PHPUnit_Framework_Error
      */
     public function testSetSharedManagerException ()
     {

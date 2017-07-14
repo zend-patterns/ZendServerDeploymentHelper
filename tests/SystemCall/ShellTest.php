@@ -66,14 +66,6 @@ class ShellTest extends TestCase
     }
 
     /**
-     * Constructs the test case.
-     */
-    public function __construct ()
-    {
-        // TODO Auto-generated constructor
-    }
-
-    /**
      * Tests Shell->exec()
      */
     public function testExec ()

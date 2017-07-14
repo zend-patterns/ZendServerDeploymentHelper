@@ -41,13 +41,6 @@ class CustomTest extends TestCase
     }
 
     /**
-     * Constructs the test case.
-     */
-    public function __construct ()
-    {
-    }
-
-    /**
      * Tests Custom->getApplicationName()
      */
     public function testGetApplicationName ()

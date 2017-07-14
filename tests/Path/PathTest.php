@@ -74,13 +74,6 @@ class PathTest extends TestCase
     }
 
     /**
-     * Constructs the test case.
-     */
-    public function __construct()
-    {
-    }
-
-    /**
      * Tests Path->getVirtualHostFile()
      */
     public function testGetVirtualHostFileDefault()

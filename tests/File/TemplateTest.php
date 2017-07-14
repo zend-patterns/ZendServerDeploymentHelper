@@ -67,13 +67,6 @@ class TemplateTest extends TestCase
     }
 
     /**
-     * Constructs the test case.
-     */
-    public function __construct()
-    {
-    }
-
-    /**
      * Tests Template->crit()
      *
      * @expectedException \ZendServer\DepH\File\Exception\RuntimeException

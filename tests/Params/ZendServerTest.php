@@ -43,13 +43,6 @@ class ZendServerTest extends TestCase
     }
 
     /**
-     * Constructs the test case.
-     */
-    public function __construct ()
-    {
-    }
-
-    /**
      * Tests ZendServer->getApplicationBaseDir()
      */
     public function testGetApplicationBaseDir ()
