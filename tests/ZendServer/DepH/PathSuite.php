@@ -1,12 +1,13 @@
 <?php
-require_once 'PHPUnit/Framework/TestSuite.php';
 
-require_once 'Path/PathTest.php';
+namespace ZendServerTest\DepH;
+
+use PHPUnit_Framework_TestSuite as TestSuite;
 
 /**
  * Static test suite.
  */
-class PathSuite extends PHPUnit_Framework_TestSuite
+class PathSuite extends TestSuite
 {
 
     /**
@@ -15,8 +16,8 @@ class PathSuite extends PHPUnit_Framework_TestSuite
     public function __construct()
     {
         $this->setName('PathSuite');
-        
-        $this->addTestSuite('PathTest');
+
+        $this->addTestSuite('ZendServerTest\DepH\Path\PathTest');
     }
 
     /**

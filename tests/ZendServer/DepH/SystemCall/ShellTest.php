@@ -1,12 +1,15 @@
 <?php
-require_once dirname(dirname(dirname(dirname(__FILE__)))) . '/bootstrap.php';
 
+namespace ZendServerTest\DepH\SystemCall;
+
+use RecursiveDirectoryIterator;
 use \ZendServer\DepH\SystemCall\Shell;
+use PHPUnit_Framework_TestCase as TestCase;
 
 /**
  * Shell test case.
  */
-class ShellTest extends PHPUnit_Framework_TestCase
+class ShellTest extends TestCase
 {
 
     /**

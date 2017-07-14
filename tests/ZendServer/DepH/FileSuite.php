@@ -1,12 +1,13 @@
 <?php
-require_once 'PHPUnit/Framework/TestSuite.php';
 
-require_once 'File/TemplateTest.php';
+namespace ZendServerTest\DepH;
+
+use PHPUnit_Framework_TestSuite as TestSuite;
 
 /**
  * Static test suite.
  */
-class FileSuite extends PHPUnit_Framework_TestSuite
+class FileSuite extends TestSuite
 {
 
     /**
@@ -15,8 +16,8 @@ class FileSuite extends PHPUnit_Framework_TestSuite
     public function __construct()
     {
         $this->setName('FileSuite');
-        
-        $this->addTestSuite('TemplateTest');
+
+        $this->addTestSuite('ZendServerTest\DepH\File\TemplateTest');
     }
 
     /**

@@ -1,20 +1,21 @@
 <?php
-require_once 'PHPUnit/Framework/TestSuite.php';
 
-require_once 'SystemCall/ShellTest.php';
+namespace ZendServerTest\DepH;
+
+use PHPUnit_Framework_TestSuite as TestSuite;
 
 /**
  * Static test suite.
  */
-class SystemCallSuite extends PHPUnit_Framework_TestSuite {
-	
+class SystemCallSuite extends TestSuite {
+
 	/**
 	 * Constructs the test suite handler.
 	 */
 	public function __construct() {
-		$this->setName ( 'SystemCallSuite' );
-		
-		$this->addTestSuite ( 'ShellTest' );
+        $this->setName ( 'SystemCallSuite' );
+
+		$this->addTestSuite ( 'ZendServerTest\DepH\SystemCall\ShellTest' );
 	}
 	
 	/**

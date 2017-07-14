@@ -1,15 +1,16 @@
 <?php
-require_once dirname(dirname(dirname(dirname(__FILE__)))) . '/bootstrap.php';
 
+namespace ZendServerTest\DepH\Params;
+
+use Mockery;
 use \ZendServer\DepH\Params\Params;
 use Zend\EventManager\SharedEventManager;
-
-require_once 'PHPUnit/Framework/TestCase.php';
+use PHPUnit_Framework_TestCase as TestCase;
 
 /**
  * Params test case.
  */
-class ParamsTest extends PHPUnit_Framework_TestCase
+class ParamsTest extends TestCase
 {
 
     /**
@@ -81,7 +82,7 @@ class ParamsTest extends PHPUnit_Framework_TestCase
     /**
      * Tests Params->unsetSharedManager()
      * 
-     * @expectedException ZendServer\DepH\Params\Exception\MissingPropertyException
+     * @expectedException \ZendServer\DepH\Params\Exception\MissingPropertyException
      */
     public function testUnsetSharedManager ()
     {
@@ -92,7 +93,7 @@ class ParamsTest extends PHPUnit_Framework_TestCase
     /**
      * Tests Params->addParamContainer()
      * 
-     * @expectedException ZendServer\DepH\Params\Exception\InvalidArgumentException
+     * @expectedException \ZendServer\DepH\Params\Exception\InvalidArgumentException
      */
     public function testAddParamContainer ()
     {
@@ -118,7 +119,7 @@ class ParamsTest extends PHPUnit_Framework_TestCase
     /**
      * Tests Params->checkEnvVariable()
      * 
-     * @expectedException ZendServer\DepH\Params\Exception\RuntimeException
+     * @expectedException \ZendServer\DepH\Params\Exception\RuntimeException
      */
     public function testCheckEnvVariableException ()
     {
@@ -149,7 +150,7 @@ class ParamsTest extends PHPUnit_Framework_TestCase
     /**
      * Tests Params->stopPropagationIfActionPreStage()
      * 
-     * @expectedException ZendServer\DepH\Params\Exception\RuntimeException
+     * @expectedException \ZendServer\DepH\Params\Exception\RuntimeException
      */
     public function testStopPropagationIfActionPreStageException ()
     {
@@ -186,7 +187,7 @@ class ParamsTest extends PHPUnit_Framework_TestCase
     /**
      * Tests Params->stopPropagationIfNotUpdate()
      * 
-     * @expectedException ZendServer\DepH\Params\Exception\RuntimeException
+     * @expectedException \ZendServer\DepH\Params\Exception\RuntimeException
      */
     public function testStopPropagationIfNotUpdateException ()
     {
@@ -222,7 +223,7 @@ class ParamsTest extends PHPUnit_Framework_TestCase
     /**
      * Tests Params->__call()
      * 
-     * @expectedException ZendServer\DepH\Params\Exception\RuntimeException
+     * @expectedException \ZendServer\DepH\Params\Exception\RuntimeException
      */
     public function test__callException ()
     {

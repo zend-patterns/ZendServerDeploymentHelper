@@ -1,27 +1,15 @@
 <?php
-require_once dirname(dirname(dirname(dirname(__FILE__)))) . '/bootstrap.php';
+
+namespace ZendServerTest\DepH\Path;
 
 use \ZendServer\DepH\Path\Path;
-
-function deleteDir($dir) {
-    $rdIt = new RecursiveDirectoryIterator($dir);
-    while($rdIt->valid()) {
-    
-        if (!$rdIt->isDot()) {
-            $filename = (string) $rdIt->key();
-            if (is_dir($filename)) deleteDir($filename);
-            else unlink($filename);
-        }
-    
-        $rdIt->next();
-    }
-    rmdir($dir);
-}
+use RecursiveDirectoryIterator;
+use PHPUnit_Framework_TestCase as TestCase;
 
 /**
  * Path test case.
  */
-class PathTest extends PHPUnit_Framework_TestCase
+class PathTest extends TestCase
 {
 
     /**
@@ -29,7 +17,7 @@ class PathTest extends PHPUnit_Framework_TestCase
      * @var Path
      */
     private $Path;
-    
+
     private $tmpTestDir;
 
     /**
@@ -38,22 +26,37 @@ class PathTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        
+
         $this->Path = new Path();
-        
-        $shell = new ZendServer\DepH\SystemCall\Shell();
+
+        $shell = new \ZendServer\DepH\SystemCall\Shell();
         $log = \Mockery::mock('\ZendServer\DepH\Log\Log');
         $log->shouldReceive('info');
         $shell->setLog($log);
-        
+
         $this->Path->setShell($shell);
-        
+
         $this->tmpTestDir = __DIR__ . '/_files/tmp';
-        
+
         if (is_dir($this->tmpTestDir)) {
-            deleteDir($this->tmpTestDir);
+            $this->deleteDir($this->tmpTestDir);
         }
         mkdir($this->tmpTestDir, 0777, true);
+    }
+
+    private function deleteDir($dir) {
+        $rdIt = new RecursiveDirectoryIterator($dir);
+        while($rdIt->valid()) {
+
+            if (!$rdIt->isDot()) {
+                $filename = (string) $rdIt->key();
+                if (is_dir($filename)) $this->deleteDir($filename);
+                else unlink($filename);
+            }
+
+            $rdIt->next();
+        }
+        rmdir($dir);
     }
 
     /**
