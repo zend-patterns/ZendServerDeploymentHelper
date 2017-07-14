@@ -32,8 +32,9 @@ class ShellTest extends TestCase
         
         $this->tmpTestDir = __DIR__ . '/_files/tmp/shelltest';
         $this->Shell = new Shell();
-        $log = \Mockery::mock('\ZendServer\DepH\Log\Log');
-        $log->shouldReceive('info');
+
+        $log = $this->getMockBuilder('\ZendServer\DepH\Log\Log')->getMock();
+        $log->expects($this->atLeastOnce())->method('info')->with($this->anything());
         $this->Shell->setLog($log);
         
         if (is_dir($this->tmpTestDir)) {

@@ -172,8 +172,8 @@ class Path {
     /**
      * actually executes the mkdir and permission actions.
      * 
-     * @see ZendServer\DepH\Path::makeWritableDir
-     * @see ZendServer\DepH\Path::makePersitentWritableDir
+     * @see \ZendServer\DepH\Path\Path::makeWritableDir
+     * @see \ZendServer\DepH\Path\Path::makePersitentWritableDir
      * 
      * @param string $dir
      */

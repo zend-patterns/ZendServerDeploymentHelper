@@ -40,7 +40,7 @@ class AdapterMysqli extends Adapter implements LogAwareInterface {
     /**
      * Shell
      *
-     * @var \ZendServer\DepH\Shell\Shell
+     * @var \ZendServer\DepH\SystemCall\Shell
      */
     private $shell;
     
@@ -76,7 +76,7 @@ class AdapterMysqli extends Adapter implements LogAwareInterface {
     } 
     
     /**
-     * @param \ZendServer\DepH\File\Path $path
+     * @param \ZendServer\DepH\Path\Path $path
      */
     public function setPath(\ZendServer\DepH\Path\Path $path) {
         $this->path = $path;

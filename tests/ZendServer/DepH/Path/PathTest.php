@@ -21,6 +21,11 @@ class PathTest extends TestCase
     private $tmpTestDir;
 
     /**
+     * @var \ZendServer\DepH\Log\Log|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $log;
+
+    /**
      * Prepares the environment before running a test.
      */
     protected function setUp()
@@ -30,9 +35,8 @@ class PathTest extends TestCase
         $this->Path = new Path();
 
         $shell = new \ZendServer\DepH\SystemCall\Shell();
-        $log = \Mockery::mock('\ZendServer\DepH\Log\Log');
-        $log->shouldReceive('info');
-        $shell->setLog($log);
+        $this->log = $this->getMockBuilder('\ZendServer\DepH\Log\Log')->getMock();
+        $shell->setLog($this->log);
 
         $this->Path->setShell($shell);
 
@@ -187,6 +191,7 @@ class PathTest extends TestCase
     }
     
     public function testMakeWritableDir() {
+        $this->log->expects($this->atLeastOnce())->method('info')->with($this->anything());
         $params = \Mockery::mock('\ZendServer\DepH\Params\Params');
         $params->shouldReceive(array(
             'getApplicationBaseDir' => $this->tmpTestDir,
@@ -206,6 +211,9 @@ class PathTest extends TestCase
     }
     
     public function testMakePersitentWritableDir() {
+
+        $this->log->expects($this->atLeastOnce())->method('info')->with($this->anything());
+
         $params = \Mockery::mock('\ZendServer\DepH\Params\Params');
         $params->shouldReceive(array(
             'getApplicationBaseDir' => $this->tmpTestDir,
