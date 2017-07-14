@@ -1,20 +1,12 @@
 <?php
-require_once 'PHPUnit/Framework/TestSuite.php';
+namespace ZendServerTest;
 
-require_once 'DepH/DeploymentSuite.php';
-
-require_once 'DepH/FileSuite.php';
-
-require_once 'DepH/ParamsSuite.php';
-
-require_once 'DepH/PathSuite.php';
-
-require_once 'DepH/SystemCallSuite.php';
+use PHPUnit_Framework_TestSuite as TestSuite;
 
 /**
  * Static test suite.
  */
-class DepHSuite extends PHPUnit_Framework_TestSuite
+class DepHSuite extends TestSuite
 {
 
     /**
@@ -23,16 +15,16 @@ class DepHSuite extends PHPUnit_Framework_TestSuite
     public function __construct()
     {
         $this->setName('DepHSuite');
-        
-        $this->addTestSuite('DeploymentSuite');
-        
-        $this->addTestSuite('FileSuite');
-        
-        $this->addTestSuite('ParamsSuite');
-        
-        $this->addTestSuite('PathSuite');
-        
-        $this->addTestSuite('SystemCallSuite');
+
+        $this->addTestSuite('ZendServerTest\DepH\DeploymentSuite');
+
+        $this->addTestSuite('ZendServerTest\DepH\FileSuite');
+
+        $this->addTestSuite('ZendServerTest\DepH\ParamsSuite');
+
+        $this->addTestSuite('ZendServerTest\DepH\PathSuite');
+
+        $this->addTestSuite('ZendServerTest\DepH\SystemCallSuite');
     }
 
     /**

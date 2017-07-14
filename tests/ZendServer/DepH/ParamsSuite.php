@@ -1,16 +1,13 @@
 <?php
-require_once 'PHPUnit/Framework/TestSuite.php';
 
-require_once 'Params/CustomTest.php';
+namespace ZendServerTest\DepH;
 
-require_once 'Params/ParamsTest.php';
-
-require_once 'Params/ZendServerTest.php';
+use PHPUnit_Framework_TestSuite as TestSuite;
 
 /**
  * Static test suite.
  */
-class ParamsSuite extends PHPUnit_Framework_TestSuite
+class ParamsSuite extends TestSuite
 {
 
     /**
@@ -19,12 +16,12 @@ class ParamsSuite extends PHPUnit_Framework_TestSuite
     public function __construct ()
     {
         $this->setName('ParamsSuite');
-        
-        $this->addTestSuite('CustomTest');
-        
-        $this->addTestSuite('ParamsTest');
-        
-        $this->addTestSuite('ZendServerTest');
+
+        $this->addTestSuite('ZendServerTest\DepH\Params\CustomTest');
+
+        $this->addTestSuite('ZendServerTest\DepH\Params\ParamsTest');
+
+        $this->addTestSuite('ZendServerTest\DepH\Params\ZendServerTest');
     }
 
     /**

@@ -1,12 +1,14 @@
 <?php
-require_once dirname(dirname(dirname(dirname(__FILE__)))) . '/bootstrap.php';
+
+namespace ZendServerTest\DepH\Deployment;
 
 use \ZendServer\DepH\Deployment\Deployment;
+use PHPUnit_Framework_TestCase as TestCase;
 
 /**
  * Deployment test case.
  */
-class DeploymentTest extends PHPUnit_Framework_TestCase
+class DeploymentTest extends TestCase
 {
 
     /**
@@ -21,7 +23,7 @@ class DeploymentTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        
+
         $this->Deployment = new Deployment();
     }
 
@@ -31,27 +33,20 @@ class DeploymentTest extends PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         $this->Deployment = null;
-        
+
         parent::tearDown();
     }
 
     /**
-     * Constructs the test case.
-     */
-    public function __construct()
-    {
-    }
-
-    /**
      * Tests Deployment->getCurrentAction()
-     * 
-     * @expectedException ZendServer\DepH\Deployment\Exception\RuntimeException
+     *
+     * @expectedException \ZendServer\DepH\Deployment\Exception\RuntimeException
      */
     public function testGetCurrentActionException()
     {
         $this->Deployment->getCurrentAction();
     }
-    
+
     /**
      * Tests Deployment->getCurrentAction()
      */
@@ -59,7 +54,7 @@ class DeploymentTest extends PHPUnit_Framework_TestCase
     {
         $methodToCall = 'getCurrentAction';
         $actual = require '_files/pre_activate.php';
-        
+
         $this->assertEquals(\ZendServer\DepH\Deployment\Deployment::PRE_ACTIVATE, $actual);
     }
 
@@ -70,14 +65,14 @@ class DeploymentTest extends PHPUnit_Framework_TestCase
     {
         $methodToCall = 'getCurrentActionScript';
         $actual = require '_files/pre_activate.php';
-        
+
         $this->assertEquals('pre_activate.php', $actual);
     }
-    
+
     /**
      * Tests Deployment->getCurrentActionScript()
-     * 
-     * @expectedException ZendServer\DepH\Deployment\Exception\RuntimeException
+     *
+     * @expectedException \ZendServer\DepH\Deployment\Exception\RuntimeException
      */
     public function testGetCurrentActionScriptException()
     {
@@ -91,18 +86,18 @@ class DeploymentTest extends PHPUnit_Framework_TestCase
     {
         $methodToCall = 'isPreStageAction';
         $actual = require '_files/pre_activate.php';
-        
+
         $this->assertFalse($actual);
-        
+
         $actual = require '_files/pre_stage.php';
-        
+
         $this->assertTrue($actual);
     }
-    
+
     /**
      * Tests Deployment->isPreStageAction()
-     * 
-     * @expectedException ZendServer\DepH\Deployment\Exception\RuntimeException
+     *
+     * @expectedException \ZendServer\DepH\Deployment\Exception\RuntimeException
      */
     public function testIsPreStageActionException()
     {
@@ -116,18 +111,18 @@ class DeploymentTest extends PHPUnit_Framework_TestCase
     {
         $methodToCall = 'isPostStageAction';
         $actual = require '_files/pre_activate.php';
-        
+
         $this->assertFalse($actual);
-        
+
         $actual = require '_files/post_stage.php';
-        
+
         $this->assertTrue($actual);
     }
-    
+
     /**
      * Tests Deployment->isPostStageAction()
-     * 
-     * @expectedException ZendServer\DepH\Deployment\Exception\RuntimeException
+     *
+     * @expectedException \ZendServer\DepH\Deployment\Exception\RuntimeException
      */
     public function testIsPostStageActionException()
     {
@@ -141,18 +136,18 @@ class DeploymentTest extends PHPUnit_Framework_TestCase
     {
         $methodToCall = 'isPreActivateAction';
         $actual = require '_files/pre_activate.php';
-        
+
         $this->assertTrue($actual);
-        
+
         $actual = require '_files/post_stage.php';
-        
+
         $this->assertFalse($actual);
     }
-    
+
     /**
      * Tests Deployment->isPreActivateAction()
-     * 
-     * @expectedException ZendServer\DepH\Deployment\Exception\RuntimeException
+     *
+     * @expectedException \ZendServer\DepH\Deployment\Exception\RuntimeException
      */
     public function testIsPreActivateActionException()
     {
@@ -166,18 +161,18 @@ class DeploymentTest extends PHPUnit_Framework_TestCase
     {
         $methodToCall = 'isPostActivateAction';
         $actual = require '_files/pre_activate.php';
-        
+
         $this->assertFalse($actual);
-        
+
         $actual = require '_files/post_activate.php';
-        
+
         $this->assertTrue($actual);
     }
-    
+
     /**
      * Tests Deployment->isPostActivateAction()
-     * 
-     * @expectedException ZendServer\DepH\Deployment\Exception\RuntimeException
+     *
+     * @expectedException \ZendServer\DepH\Deployment\Exception\RuntimeException
      */
     public function testIsPostActivateActionException()
     {
