@@ -1,0 +1,63 @@
+sudo: false
+language: php
+cache:
+  directories:
+    - "$HOME/.composer/cache"
+    - vendor
+    - "$HOME/.local"
+
+php:
+  - 5.3
+  - 5.4
+  - 5.5
+  - 5.6
+  - 7.0
+  - 7.1
+
+env:
+  global:
+    - COMPOSER_ARGS="--no-interaction --no-suggest"
+    - COMPOSER_ZPK_ARGS="--no-dev --classmap-authoritative"
+    - COMPOSER_DISCARD_CHANGES=1
+    - COVERAGE_DEPS="satooshi/php-coveralls"
+  matrix:
+    - DEPS=lowest
+    - DEPS=latest
+
+matrix:
+  fast_finish: true
+  include:
+    - php: 5.6
+      env:
+        - DEPS=latest
+        - CS_CHECK=true
+        - TEST_COVERAGE=true
+        - BUILD_ZPK="$(if [[ $TRAVIS_PULL_REQUEST == 'false' ]]; then echo -n 'true'; else echo -n 'false'; fi)"
+  exclude:
+    - php: 5.6
+      env: DEPS=latest
+  allow_failures:
+    - php: 7.0
+    - php: 7.1
+
+before_install:
+  - if [[ $TEST_COVERAGE != 'true' ]]; then phpenv config-rm xdebug.ini || return 0 ; fi
+  - travis_retry composer self-update
+
+install:
+  - if [[ $DEPS == 'latest' ]]; then travis_retry composer update -vvv $COMPOSER_ARGS ; fi
+  - if [[ $DEPS == 'lowest' ]]; then travis_retry composer update -vvv --prefer-lowest --prefer-stable $COMPOSER_ARGS ; fi
+  - if [[ $BUILD_ZPK == 'true' ]]; then travis_retry composer global require --dev $COMPOSER_ARGS phing/phing ; fi
+  - travis_retry composer install -vvv $COMPOSER_ARGS
+  - if [[ $TEST_COVERAGE == 'true' ]]; then travis_retry composer require --dev $COMPOSER_ARGS $COVERAGE_DEPS ; fi
+  - composer show --installed
+
+script:
+  - if [[ $TEST_COVERAGE == 'true' ]]; then composer test-coverage ; fi
+  - if [[ $TEST_COVERAGE != 'true' ]]; then composer test ; fi
+  - if [[ $BUILD_ZPK == 'true' ]]; then travis_retry composer install -vvv $COMPOSER_ARGS $COMPOSER_ZPK_ARGS ; fi
+  - if [[ $BUILD_ZPK == 'true' ]]; then composer show --installed ; fi
+#  - if [[ $TRAVIS_TEST_RESULT == 0 && $BUILD_ZPK == 'true' ]]; then phing build ; fi
+
+after_script:
+  - if [[ $TEST_COVERAGE == 'true' ]]; then composer upload-coverage ; fi

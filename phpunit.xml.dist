@@ -1,0 +1,60 @@
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="./vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="tests/bootstrap.php"
+         backupGlobals="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         beStrictAboutOutputDuringTests="true"
+         forceCoversAnnotation="false"
+         stopOnError="false"
+         stopOnFailure="false"
+         stopOnIncomplete="false"
+         stopOnSkipped="false"
+         verbose="true"
+         colors="false">
+    <testsuites>
+        <!--<testsuite name="Zend Server DepH Deployment Suite">-->
+            <!--<directory>./tests/Deployment</directory>-->
+        <!--</testsuite>-->
+        <!--<testsuite name="Zend Server DepH File Suite">-->
+            <!--<directory>./tests/File</directory>-->
+        <!--</testsuite>-->
+        <!--<testsuite name="Zend Server DepH Params Suite">-->
+            <!--<directory>./tests/Params</directory>-->
+        <!--</testsuite>-->
+        <!--<testsuite name="Zend Server DepH Path Suite">-->
+            <!--<directory>./tests/Path</directory>-->
+        <!--</testsuite>-->
+        <!--<testsuite name="Zend Server DepH SystemCall Suite">-->
+            <!--<directory>./tests/SystemCall</directory>-->
+        <!--</testsuite>-->
+        <testsuite name="Zend Server DepH Suite">
+            <file>./tests/ZendServer/DepHSuite.php</file>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist addUncoveredFilesFromWhitelist="true" processUncoveredFilesFromWhitelist="false">
+            <directory suffix=".php">ZendServer/DepH</directory>
+            <exclude>
+                <directory suffix=".php">test/ZendServer/DepH</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+
+    <groups>
+        <exclude>
+            <group>disable</group>
+            <group>integration</group>
+        </exclude>
+    </groups>
+
+    <php>
+        <ini name="date.timezone" value="UTC"/>
+        <ini name="memory_limit" value="128M"/>
+        <ini name="error_reporting" value="-1" />
+        <ini name="zend.enable_gc" value="0"/>
+    </php>
+
+</phpunit>
