@@ -54,7 +54,7 @@ install:
   - if [[ $BUILD_ZPK == 'true' ]]; then travis_retry composer global require --dev $COMPOSER_ARGS phing/phing ; fi
   - travis_retry composer install -vvv $COMPOSER_ARGS
   - if [[ $TEST_COVERAGE == 'true' ]]; then travis_retry composer require --dev $COMPOSER_ARGS $COVERAGE_DEPS ; fi
-  - composer show --all
+  - composer show
 
 script:
   - if [[ $TEST_COVERAGE == 'true' ]]; then composer test-coverage ; else composer test ; fi
