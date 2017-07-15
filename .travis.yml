@@ -59,7 +59,17 @@ script:
   - if [[ $TEST_COVERAGE == 'true' ]]; then composer test-coverage ; else composer test ; fi
   - if [[ $BUILD_ZPK == 'true' ]]; then travis_retry composer install -vvv $COMPOSER_ARGS $COMPOSER_ZPK_ARGS ; fi
   - if [[ $BUILD_ZPK == 'true' ]]; then composer show --installed ; fi
-#  - if [[ $TRAVIS_TEST_RESULT == 0 && $BUILD_ZPK == 'true' ]]; then phing build ; fi
+  - if [[ $TRAVIS_TEST_RESULT == 0 && $BUILD_ZPK == 'true' ]]; then phing build ; fi
 
 after_script:
   - if [[ $TEST_COVERAGE == 'true' ]]; then composer upload-coverage ; fi
+
+deploy:
+  - provider: releases
+    api_key:
+      secure: {ENCRYPTED GITHUB OAUTH TOKEN}
+    file: "dist/ZendServerDeploymentHelper-${TRAVIS_TAG}.zpk"
+    skip_cleanup: true
+    on:
+      condition: $BUILD_ZPK = true
+      tags: true

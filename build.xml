@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ZendServerDeploymentHelper" default="build" description="">
+    <property environment="env" />
+
+    <property name="env.TRAVIS_BRANCH" value="local"/>
+    <property name="env.TRAVIS_TAG" value=""/>
+
+    <php expression="str_replace(['tags/', 'branches/', '/'], ['', '', '-'], !empty('${env.TRAVIS_TAG}') ? '${env.TRAVIS_TAG}' : '${env.TRAVIS_BRANCH}')" returnProperty="build.version"/>
+    <php expression="date('Y-m-d')" returnProperty="library.releasedate"/>
+    <php expression="!empty('${env.TRAVIS_TAG}') ? '${project.name}-latest.zpk' : '${project.name}-${env.TRAVIS_BRANCH}-latest.zpk'" returnProperty="build.filename.latest"/>
+
+    <property file="./build.properties"/>
+
+    <fileset id="sourcefileset" dir="${project.root}">
+        <include name="deph.php"/>
+        <include name="init_autoloader.php"/>
+        <include name="LICENSE.txt"/>
+        <include name="README.md"/>
+        <include name="etc/**"/>
+        <include name="src/**"/>
+        <include name="vendor/**"/>
+        <exclude name="**/tests/"/>
+        <exclude name="**/test/"/>
+        <exclude name="**/composer.json"/>
+        <exclude name="**/composer.lock"/>
+        <exclude name="**/.gitignore"/>
+        <exclude name="**/.gitattributes"/>
+        <exclude name="**/.gitmodules"/>
+        <exclude name="**/.scruntinizer.yml"/>
+        <exclude name="**/.travis.yml"/>
+        <exclude name="**/.coveralls.yml"/>
+        <exclude name="**/build.xml"/>
+        <exclude name="**/build.properties"/>
+        <exclude name="**/phpunit.xml"/>
+        <exclude name="**/phpunit.xml.dist"/>
+        <exclude name="**/phpmd.xml.dist"/>
+        <exclude name="**/phpdox.xml.dist"/>
+        <exclude name="**/installed.json"/>
+        <exclude name="**/deployment.xml.in"/>
+        <exclude name="**/deployment.xml.in.dist"/>
+        <exclude name="**/*.md"/>
+        <exclude name="**/*.mdown"/>
+        <exclude name="**/.php_cs"/>
+        <exclude name="**/Vagrantfile"/>
+        <exclude name="**/Doxyfile"/>
+    </fileset>
+
+    <target name="init">
+        <tstamp/>
+        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${build.dir}/scripts"/>
+        <mkdir dir="${build.dir}/src"/>
+    </target>
+
+    <target name="clean" description="Cleanup build artifacts">
+        <delete dir="${dist.dir}" includeemptydirs="true" quiet="true"/>
+        <delete dir="${build.dir}" includeemptydirs="true" quiet="true"/>
+    </target>
+
+    <target name="build" depends="-create-zpk" description="Default build. Will build the ZPK."/>
+
+    <target name="-create-zpk" depends="init" description="Create a zend deployment package">
+        <!-- http://files.zend.com/help/Zend-Server-6/content/updating_libraries.htm -->
+
+        <!--<copy todir="${build.dir}/scripts" tstamp="true">-->
+        <!--<fileset dir="${project.root}/scripts">-->
+        <!--<include name="**"/>-->
+        <!--</fileset>-->
+        <!--</copy>-->
+
+        <copy todir="${build.dir}/src" tstamp="true">
+            <fileset refid="sourcefileset"/>
+        </copy>
+
+        <copy file="${project.root}/deployment.in.xml" tofile="${build.dir}/deployment.xml" tstamp="true" overwrite="true">
+            <filterchain>
+                <replacetokens begintoken="%%" endtoken="%%">
+                    <token key="project.version" value="${project.version}"/>
+                    <token key="library.releasedate" value="${library.releasedate}"/>
+                    <token key="library.updateurl" value="${library.updateurl}"/>
+                </replacetokens>
+            </filterchain>
+        </copy>
+
+        <zip destfile="${dist.dir}/${dist.filename}.zpk">
+            <fileset dir="${build.dir}">
+                <include name="**"/>
+            </fileset>
+        </zip>
+
+        <copy file="${dist.dir}/${dist.filename}.zpk" tofile="${dist.dir}/${build.filename.latest}" />
+    </target>
+</project>
