@@ -22,8 +22,8 @@
         </testsuite>
         <testsuite name="Zend Server DepH Params Suite">
             <directory>./tests/Params</directory>
-            <file phpVersion="7.0" phpVersionOperator="&lt;">./tests/Params/ParamsTest.php</file>
-            <file phpVersion="7.0" phpVersionOperator=">=">./tests/Params/PHP7ParamsTest.php</file>
+            <file phpVersion="7.0" phpVersionOperator="&lt;">./tests/Params/ParamsTestPHP5.php</file>
+            <file phpVersion="7.0" phpVersionOperator=">=">./tests/Params/ParamsTestPHP7.php</file>
         </testsuite>
         <testsuite name="Zend Server DepH Path Suite">
             <directory>./tests/Path</directory>

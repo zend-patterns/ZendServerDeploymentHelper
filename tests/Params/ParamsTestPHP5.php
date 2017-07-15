@@ -10,7 +10,7 @@ use PHPUnit_Framework_TestCase as TestCase;
 /**
  * Params test case.
  */
-class ParamsTest extends TestCase
+class ParamsTestPHP5 extends TestCase
 {
 
     /**

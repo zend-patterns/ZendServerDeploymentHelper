@@ -10,7 +10,7 @@ use PHPUnit_Framework_TestCase as TestCase;
 /**
  * Params test case.
  */
-class PHP7ParamsTest extends ParamsTest
+class ParamsTestPHP5PHP7 extends ParamsTestPHP5
 {
     /**
      * Tests Params->setSharedManager()
