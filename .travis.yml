@@ -36,6 +36,7 @@ matrix:
       env:
         - DEPS=latest
         - BUILD_ZPK="$(if [[ $TRAVIS_PULL_REQUEST == 'false' ]]; then echo -n 'true'; else echo -n 'false'; fi)"
+        - PATH="$HOME/.composer/vendor/bin:$HOME/.local/bin:$PATH"
   exclude:
     - php: 5.6
       env: DEPS=latest
@@ -53,7 +54,7 @@ install:
   - if [[ $BUILD_ZPK == 'true' ]]; then travis_retry composer global require --dev $COMPOSER_ARGS phing/phing ; fi
   - travis_retry composer install -vvv $COMPOSER_ARGS
   - if [[ $TEST_COVERAGE == 'true' ]]; then travis_retry composer require --dev $COMPOSER_ARGS $COVERAGE_DEPS ; fi
-  - composer show --installed
+  - composer show --all
 
 script:
   - if [[ $TEST_COVERAGE == 'true' ]]; then composer test-coverage ; else composer test ; fi
