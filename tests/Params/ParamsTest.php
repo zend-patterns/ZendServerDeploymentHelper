@@ -17,7 +17,7 @@ class ParamsTest extends TestCase
      *
      * @var Params
      */
-    private $Params;
+    protected $Params;
 
     /**
      * Prepares the environment before running a test.
@@ -49,17 +49,20 @@ class ParamsTest extends TestCase
         $sharedManager = new SharedEventManager();
         
         $this->Params->setSharedManager($sharedManager);
+
+        $this->assertSame($sharedManager, $this->Params->getSharedManager());
     }
     
     /**
      * Tests Params->setSharedManager()
-     * 
+     *
      * @expectedException \PHPUnit_Framework_Error
      */
     public function testSetSharedManagerException ()
     {
+
         $sharedManager = \Mockery::mock('NoSharedEventManager');
-        
+
         $this->Params->setSharedManager($sharedManager);
     }
 

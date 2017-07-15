@@ -15,19 +15,21 @@
          colors="false">
     <testsuites>
         <testsuite name="Zend Server DepH Deployment Suite">
-        <directory>./tests/Deployment</directory>
+            <directory>./tests/Deployment</directory>
         </testsuite>
         <testsuite name="Zend Server DepH File Suite">
-        <directory>./tests/File</directory>
+            <directory>./tests/File</directory>
         </testsuite>
         <testsuite name="Zend Server DepH Params Suite">
-        <directory>./tests/Params</directory>
+            <directory>./tests/Params</directory>
+            <file phpVersion="7.0" phpVersionOperator="&lt;">./tests/Params/ParamsTest.php</file>
+            <file phpVersion="7.0" phpVersionOperator=">=">./tests/Params/PHP7ParamsTest.php</file>
         </testsuite>
         <testsuite name="Zend Server DepH Path Suite">
-        <directory>./tests/Path</directory>
+            <directory>./tests/Path</directory>
         </testsuite>
         <testsuite name="Zend Server DepH SystemCall Suite">
-        <directory>./tests/SystemCall</directory>
+            <directory>./tests/SystemCall</directory>
         </testsuite>
     </testsuites>
 
@@ -50,7 +52,7 @@
     <php>
         <ini name="date.timezone" value="UTC"/>
         <ini name="memory_limit" value="128M"/>
-        <ini name="error_reporting" value="-1" />
+        <ini name="error_reporting" value="-1"/>
         <ini name="zend.enable_gc" value="0"/>
     </php>
 
