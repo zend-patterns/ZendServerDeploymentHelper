@@ -5,6 +5,7 @@
 
 namespace ZendServer\DepH\Debugger;
 
+use ZendServer\DepH\Deployment\Deployment;
 use ZendServer\DepH\Log\LogAwareInterface;
 
 class ZendDebugger implements LogAwareInterface
@@ -18,7 +19,17 @@ class ZendDebugger implements LogAwareInterface
      * @var \ZendServer\DepH\Log\Log
      */
     private $log;
-    
+
+    /**
+     * ZendDebugger constructor.
+     *
+     * @param \ZendServer\DepH\Deployment\Deployment $deployment
+     */
+    public function __construct(Deployment $deployment)
+    {
+        $this->setDeployment($deployment);
+    }
+
     /**
      * Starts a Zend debug session on client with given IP.
      * Please note, that the original call will terminate at the end of this script,
@@ -57,7 +68,7 @@ class ZendDebugger implements LogAwareInterface
     /**
      * @param \ZendServer\DepH\Deployment\Deployment $deployment
      */
-    public function setDeployment(\ZendServer\DepH\Deployment\Deployment $deployment) {
+    public function setDeployment(Deployment $deployment) {
         $this->deployment = $deployment;
     }
 
