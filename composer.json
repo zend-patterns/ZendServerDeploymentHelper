@@ -1,6 +1,7 @@
 {
   "name": "zend-pattern/ZendServerDeploymentHelper",
   "require": {
+    "php": "^5.3.23 || ^7.0",
     "zendframework/zend-db": "2.4.8",
     "zendframework/zend-eventmanager": "2.4.8",
     "zendframework/zend-i18n": "2.4.8",
@@ -10,6 +11,8 @@
   "require-dev": {
     "mockery/mockery": "0.9.4",
     "phpunit/phpunit": "4.8.36",
+    "mikey179/vfsStream": "^1.6",
+    "zendframework/zend-config": "2.4.8",
     "zendframework/zend-loader": "2.4.8"
   },
   "autoload": {
