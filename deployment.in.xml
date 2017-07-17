@@ -10,7 +10,7 @@
         <release>%%project.version%%</release>
     </version>
     <releasedate>%%library.releasedate%%</releasedate>
-    <icon>etc/logo.gif</icon>
+    <icon>logo.gif</icon>
     <eula>LICENSE.txt</eula>
     <libdir>src</libdir>
     <scriptsdir>scripts</scriptsdir>
