@@ -65,7 +65,7 @@ after_script:
 deploy:
   - provider: releases
     api_key:
-      secure: {ENCRYPTED GITHUB OAUTH TOKEN}
+      secure: DomTGXybcR47TbiNl3I65M9N+qQZLxj22Dqr8W6SQq5/vUoR3BeUprZgYuOhcdWzmjLH0ZLIvn+JMDT8sP4fXkAzpOkeOQY166I6qw3fWXXp9wlh3RZqJghz7R3u+hNn/Md0fgZl1wrO+juNTedd3LVL4b0nKxbcenVFQmRjTEw=
     file: "dist/ZendServerDeploymentHelper-${TRAVIS_TAG}.zpk"
     skip_cleanup: true
     on:
