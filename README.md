@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/zend-patterns/ZendServerDeploymentHelper.svg?branch=master)](https://travis-ci.org/zend-patterns/ZendServerDeploymentHelper)
+[![Coverage Status](https://coveralls.io/repos/github/zend-patterns/ZendServerDeploymentHelper/badge.svg?branch=master)](https://coveralls.io/github/zend-patterns/ZendServerDeploymentHelper?branch=master)
+
 # Zend Server Deployment Helper
 Zend Server Deployment Helper (DepH) is a Zend Framework 2 based set of classes
 which supports in creating reliable hook scripts of Zend Server 

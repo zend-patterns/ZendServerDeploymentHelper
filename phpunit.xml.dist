@@ -14,31 +14,30 @@
          verbose="true"
          colors="false">
     <testsuites>
-        <!--<testsuite name="Zend Server DepH Deployment Suite">-->
-        <!--<directory>./tests/Deployment</directory>-->
-        <!--</testsuite>-->
-        <!--<testsuite name="Zend Server DepH File Suite">-->
-        <!--<directory>./tests/File</directory>-->
-        <!--</testsuite>-->
-        <!--<testsuite name="Zend Server DepH Params Suite">-->
-        <!--<directory>./tests/Params</directory>-->
-        <!--</testsuite>-->
-        <!--<testsuite name="Zend Server DepH Path Suite">-->
-        <!--<directory>./tests/Path</directory>-->
-        <!--</testsuite>-->
-        <!--<testsuite name="Zend Server DepH SystemCall Suite">-->
-        <!--<directory>./tests/SystemCall</directory>-->
-        <!--</testsuite>-->
-        <testsuite name="Zend Server DepH Suite">
-            <file>./tests/ZendServer/DepHSuite.php</file>
+        <testsuite name="Zend Server DepH Deployment Suite">
+            <directory>./tests/Deployment</directory>
+        </testsuite>
+        <testsuite name="Zend Server DepH File Suite">
+            <directory>./tests/File</directory>
+        </testsuite>
+        <testsuite name="Zend Server DepH Params Suite">
+            <directory>./tests/Params</directory>
+            <file phpVersion="7.0" phpVersionOperator="&lt;">./tests/Params/ParamsTestPHP5.php</file>
+            <file phpVersion="7.0" phpVersionOperator=">=">./tests/Params/ParamsTestPHP7.php</file>
+        </testsuite>
+        <testsuite name="Zend Server DepH Path Suite">
+            <directory>./tests/Path</directory>
+        </testsuite>
+        <testsuite name="Zend Server DepH SystemCall Suite">
+            <directory>./tests/SystemCall</directory>
         </testsuite>
     </testsuites>
 
     <filter>
         <whitelist addUncoveredFilesFromWhitelist="true" processUncoveredFilesFromWhitelist="false">
-            <directory suffix=".php">ZendServer/DepH</directory>
+            <directory suffix=".php">src</directory>
             <exclude>
-                <directory suffix=".php">test/ZendServer/DepH</directory>
+                <directory suffix=".php">tests/</directory>
             </exclude>
         </whitelist>
     </filter>
@@ -53,7 +52,7 @@
     <php>
         <ini name="date.timezone" value="UTC"/>
         <ini name="memory_limit" value="128M"/>
-        <ini name="error_reporting" value="-1" />
+        <ini name="error_reporting" value="-1"/>
         <ini name="zend.enable_gc" value="0"/>
     </php>
 

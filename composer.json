@@ -1,28 +1,30 @@
 {
-  "name" : "zend-pattern/ZendServerDeploymentHelper",
-  "require" : {
-    "zendframework/zendframework" : "=2.4.8"
+  "name": "zend-pattern/ZendServerDeploymentHelper",
+  "require": {
+    "zendframework/zend-db": "2.4.8",
+    "zendframework/zend-eventmanager": "2.4.8",
+    "zendframework/zend-i18n": "2.4.8",
+    "zendframework/zend-log": "2.4.8",
+    "zendframework/zend-servicemanager": "2.4.8"
   },
   "require-dev": {
-    "phpunit/phpunit" : "=3.7.32",
-    "mockery/mockery" : "=0.9.4"
+    "mockery/mockery": "0.9.4",
+    "phpunit/phpunit": "4.8.36",
+    "zendframework/zend-loader": "2.4.8"
   },
   "autoload": {
     "psr-4": {
-      "ZendServer\\DepH\\": "ZendServer/DepH"
+      "ZendServer\\DepH\\": "src"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "ZendServerTest\\DepH\\": "tests/ZendServer/DepH"
-    },
-    "classmap": ["tests/ZendServer/DepHSuite.php"]
+      "ZendServerTest\\DepH\\": "tests/"
+    }
   },
   "scripts": {
-    "test": "phpunit --colors=auto --no-coverage"
-  },
-  "repositories" : [ {
-    "type" : "composer",
-    "url" : "https://packagist.org/"
-  } ]
+    "test": "phpunit --colors=auto --no-coverage",
+    "test-coverage": "phpunit --colors=auto --coverage-clover clover.xml",
+    "upload-coverage": "coveralls -v"
+  }
 }
