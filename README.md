@@ -31,6 +31,8 @@ that may be defined in each hook script:
 When implementing deployment packages one quickly notice that some 
 basic functionality like logging or DB import would be helpful.
 
+The ZPK package of the Zend Server Deployment Helper can be found in the release section. The ZPK file can be deployed as a library prior to the app deployment on a Zend Server system.
+
 ## Features
 ### Log
 Enabled logging automatically creates an app-name based log file in 

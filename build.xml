@@ -16,7 +16,6 @@
         <include name="init_autoloader.php"/>
         <include name="LICENSE.txt"/>
         <include name="README.md"/>
-        <include name="etc/**"/>
         <include name="src/**"/>
         <include name="vendor/**"/>
         <exclude name="**/tests/"/>
@@ -43,6 +42,7 @@
         <exclude name="**/.php_cs"/>
         <exclude name="**/Vagrantfile"/>
         <exclude name="**/Doxyfile"/>
+        <exclude name="**/LICENSE.txt"/>
     </fileset>
 
     <target name="init">
@@ -68,6 +68,9 @@
         <!--<include name="**"/>-->
         <!--</fileset>-->
         <!--</copy>-->
+
+        <copy file="${project.root}/LICENSE.txt" tofile="${build.dir}/LICENSE.txt" />
+        <copy file="${project.root}/etc/logo.gif" tofile="${build.dir}/logo.gif" />
 
         <copy todir="${build.dir}/src" tstamp="true">
             <fileset refid="sourcefileset"/>
