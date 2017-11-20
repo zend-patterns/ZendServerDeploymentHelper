@@ -8,4 +8,21 @@ declare(strict_types=1);
  * @license   https://github.com/zend-patterns/ZendServerDeploymentHelper/blob/master/LICENSE.md New BSD License
  */
 
-return require 'method_to_call.php';
+namespace ZendServer\DepH\Pipeline;
+
+/**
+ * Interface DelegateInterface
+ * @package ZendServer\DepH\Pipeline
+ */
+interface DelegateInterface
+{
+
+    /**
+     * Dispatch the next available middleware and return the response.
+     *
+     * @param mixed $payload
+     *
+     * @return ResultInterface
+     */
+    public function process($payload): ResultInterface;
+}

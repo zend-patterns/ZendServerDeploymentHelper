@@ -8,26 +8,33 @@ declare(strict_types=1);
  * @license   https://github.com/zend-patterns/ZendServerDeploymentHelper/blob/master/LICENSE.md New BSD License
  */
 
-namespace ZendServer\DepH\Debugger;
+namespace ZendServer\DepH\Log\Factory;
 
 use Interop\Container\ContainerInterface;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use ZendServer\DepH\Deployment\Deployment;
 
 /**
- * Class ZendDebuggerFactory
- * @package ZendServer\DepH\Debugger
+ * Class MonologFactory
+ * @package ZendServer\DepH\Log\Factory
  */
-class ZendDebuggerFactory implements FactoryInterface
+class MonologFactory implements FactoryInterface
 {
 
     /**
      * {@inheritdoc}
-     *
-     * @return ZendDebugger
+     * @return \Psr\Log\LoggerInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new ZendDebugger($container->get(Deployment::class));
+        /** @var Deployment $deployment */
+        $deployment = $container->get(Deployment::class);
+        $logger = new Logger('default');
+        $handler = new StreamHandler($deployment->getApplicationLogFile());
+        $logger->pushHandler($handler);
+
+        return $logger;
     }
 }

@@ -1,166 +1,104 @@
 <?php
+declare(strict_types=1);
 /**
- * DepH - Zend Server Deployment Helper
+ * Zend Server Deployment Helper (https://github.com/zend-patterns/ZendServerDeploymentHelper)
+ *
+ * @link      https://github.com/zend-patterns/ZendServerDeploymentHelper for the canonical source repository
+ * @copyright https://github.com/zend-patterns/ZendServerDeploymentHelper/blob/master/COPYRIGHT.md Copyright
+ * @license   https://github.com/zend-patterns/ZendServerDeploymentHelper/blob/master/LICENSE.md New BSD License
  */
 
 namespace ZendServer\DepH\File;
 
 use Zend\EventManager\EventManagerAwareInterface;
-use Zend\EventManager\EventManagerInterface;
-use ZendServer\DepH\Log\LogAwareInterface;
+use Zend\EventManager\EventManagerAwareTrait;
+use ZendServer\DepH\Filter;
+use function dirname;
+use function file_get_contents;
+use function file_put_contents;
+use function is_dir;
+use function is_file;
+use function is_readable;
+use function is_writable;
+use function touch;
 
-class Template implements EventManagerAwareInterface, LogAwareInterface
+/**
+ * Class Template
+ * @package ZendServer\DepH\File
+ */
+class Template implements EventManagerAwareInterface
 {
 
-    /**
-     * @var \ZendServer\DepH\Log\Log
-     */
-    private $log;
+    use EventManagerAwareTrait;
 
     /**
-     * @var EventManagerInterface
-     */
-    private $events;
-
-    /**
-     * @see \Zend\EventManager\EventManagerAwareInterface::setEventManager()
-     */
-    public function setEventManager(EventManagerInterface $events)
-    {
-        $events->setIdentifiers(array(
-            __CLASS__,
-            get_called_class(),
-        ));
-        $this->events = $events;
-
-        $this->events->attach('*', array($this, 'crit'));
-
-        return $this;
-    }
-
-    /**
-     * @see \Zend\EventManager\EventsCapableInterface::getEventManager()
-     */
-    public function getEventManager()
-    {
-        return $this->events;
-    }
-
-    /**
-     * @see \ZendServer\DepH\Log\LogAwareInterface::setLog()
-     */
-    public function setLog(\ZendServer\DepH\Log\Log $log)
-    {
-        $this->log = $log;
-    }
-
-    /**
-     * Should be called in case of a critical event. Thanks to the
-     * Exception, Deployment process will terminate
+     * @param $filename
      *
-     * @param string $event
-     *
-     * @throws Exception\RuntimeException
+     * @return bool|string The method returns the read data or false on failure.
+     * @throws Exception\InvalidArgumentException if file $filename does not exist
+     * @throws Exception\RuntimeException if file $value is not readable or an error while reading occurred
      */
-    public function crit($event)
+    private function readFile($filename)
     {
-        $this->log->failure($event);
-        throw new Exception\RuntimeException($event->getParam('msg'));
-    }
-
-    /**
-     * Checks whether $origFilename is a valid path. Adds absolute path
-     * if relative path is given. Returns absolute path.
-     *
-     * @param string $origFilename
-     *
-     * @return string|boolean
-     */
-    private function isFile($origFilename)
-    {
-        $filenameOptions[] = $origFilename;
-        if ($origFilename[0] != '/') {
-            $filenameOptions[] = SCRIPT_ROOT . '/' . $origFilename;
+        if (!is_file($filename)) {
+            throw new Exception\InvalidArgumentException(sprintf('File "%s" not found or not a regular file.',
+                $filename));
+        }
+        if (!is_readable($filename)) {
+            throw new Exception\RuntimeException(sprintf('Unable to read file "%s".', $filename));
+        }
+        $content = file_get_contents($filename);
+        if (!$content) {
+            throw new Exception\RuntimeException("Problem while reading file '$filename'");
         }
 
-        foreach ($filenameOptions as $filename) {
-            if (is_file($filename)) {
-                return $filename;
-            }
-        }
-
-        return false;
+        return $content;
     }
 
     /**
-     * Returns content of a given file/template. False if file doesn't exists
+     * @param $filename
+     * @param $content
      *
-     * @param string $filename
-     *
-     * @return boolean|string
+     * @return int The function returns the number of bytes that were written to the file.
+     * @throws Exception\InvalidArgumentException if file $filename does not exist
+     * @throws Exception\RuntimeException if file $filename is not writable or an error while writing occurred
      */
-    private function getTemplateContent($filename)
+    private function writeFile($filename, $content): int
     {
-
-        if (!$filename = $this->isFile($filename)) {
-            $this->getEventManager()->trigger(__FUNCTION__, $this,
-                array('msg' => "Template-File [$filename] doesn't exist."));
-
-            return false;
+        if (!is_dir(dirname($filename)) || !is_writable(dirname($filename))) {
+            throw new Exception\InvalidArgumentException(sprintf('Unable to write file "%s".', $filename));
+        }
+        if (!is_writable($filename) && !touch($filename)) {
+            throw new Exception\RuntimeException(sprintf('Unable to write to file "%s".', $filename));
+        }
+        if (!is_file($filename)) {
+            throw new Exception\InvalidArgumentException(sprintf(
+                'File "%s" not found or not a regular file.',
+                $filename
+            ));
         }
 
-        return file_get_contents($filename);
-    }
-
-    /**
-     * Writes data to file $filename
-     *
-     * @param string $filename
-     * @param string $data
-     */
-    private function writeToTarget($filename, $data)
-    {
-        if (!@file_put_contents($filename, $data)) {
-            $this->getEventManager()->trigger(__FUNCTION__, $this,
-                array('msg' => "Target-File [$filename] is not writable."));
-
-            return;
+        $result = file_put_contents($filename, $content);
+        if (!$result) {
+            throw new Exception\RuntimeException("Problem while writing file '$filename'");
         }
+
+        return $result;
     }
 
     /**
      * Takes the content of a file, substitutes values, and writes the result
      *
-     * @param string $from
-     * @param string $to
-     * @param array  $search
-     * @param array  $replace
-     */
-    public function write($from, $to, $search = array(), $replace = array())
-    {
-        $content = $this->getTemplateContent($from);
-        $content = str_replace($search, $replace, $content);
-        $this->writeToTarget($to, $content);
-    }
-
-    /**
-     * Takes the content of a file, substitutes values and returns the new content
+     * @param string $source
+     * @param string $target
+     * @param array  $data
      *
-     * @param string  $from
-     * @param array   $search
-     * @param array   $replace
-     * @param boolean $writeToLog
-     *
-     * @return string
+     * @throws Exception\RuntimeException
      */
-    public function dryRun($from, $search = null, $replace = null, $writeToLog = true)
+    public function write($source, $target, $data = [])
     {
-        $content = $this->getTemplateContent($from);
-        $content = str_replace($search, $replace, $content);
-        if ($writeToLog) {
-            $this->log->info('Content from template file after substitution: ' . $content);
-        }
-
-        return $content;
+        $content = $this->readFile($source);
+        $filter = new Filter\Template($data);
+        $this->writeFile($target, $filter->filter($content));
     }
 }

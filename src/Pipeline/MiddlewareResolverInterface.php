@@ -8,12 +8,22 @@ declare(strict_types=1);
  * @license   https://github.com/zend-patterns/ZendServerDeploymentHelper/blob/master/LICENSE.md New BSD License
  */
 
-namespace ZendServer\DepH\Deployment\Exception;
+namespace ZendServer\DepH\Pipeline;
 
 /**
- * Class RuntimeException
- * @package ZendServer\DepH\Deployment\Exception
+ * Interface MiddlewareResolverInterface
+ * @package ZendServer\DepH\Pipeline
  */
-class RuntimeException extends \Exception implements ExceptionInterface
+interface MiddlewareResolverInterface
 {
+
+    /**
+     * Resolves a $middleware to PipelineInterface
+     *
+     * @param mixed $middleware
+     *
+     * @return \ZendServer\DepH\Pipeline\PipelineInterface
+     * @throws Exception\MiddlewareResolverException if unable to resolve $middleware
+     */
+    public function resolve($middleware): PipelineInterface;
 }

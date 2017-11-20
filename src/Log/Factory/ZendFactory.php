@@ -8,26 +8,34 @@ declare(strict_types=1);
  * @license   https://github.com/zend-patterns/ZendServerDeploymentHelper/blob/master/LICENSE.md New BSD License
  */
 
-namespace ZendServer\DepH\Debugger;
+namespace ZendServer\DepH\Log\Factory;
 
 use Interop\Container\ContainerInterface;
+use Zend\Log\Logger;
+use Zend\Log\PsrLoggerAdapter;
+use Zend\Log\Writer\Stream;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use ZendServer\DepH\Deployment\Deployment;
 
 /**
- * Class ZendDebuggerFactory
- * @package ZendServer\DepH\Debugger
+ * Class ZendFactory
+ * @package ZendServer\DepH\Log\Factory
  */
-class ZendDebuggerFactory implements FactoryInterface
+class ZendFactory implements FactoryInterface
 {
 
     /**
      * {@inheritdoc}
-     *
-     * @return ZendDebugger
+     * @return \Psr\Log\LoggerInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new ZendDebugger($container->get(Deployment::class));
+        /** @var Deployment $deployment */
+        $deployment = $container->get(Deployment::class);
+        $writer = new Stream($deployment->getApplicationLogFile());
+        $zendLogger = new Logger();
+        $zendLogger->addWriter($writer);
+
+        return new PsrLoggerAdapter($zendLogger);
     }
 }

@@ -1,33 +1,42 @@
 {
-  "name": "zend-pattern/ZendServerDeploymentHelper",
-  "require": {
-    "php": "^5.3.23 || ^7.0",
-    "zendframework/zend-db": "2.4.8",
-    "zendframework/zend-eventmanager": "2.4.8",
-    "zendframework/zend-i18n": "2.4.8",
-    "zendframework/zend-log": "2.4.8",
-    "zendframework/zend-servicemanager": "2.4.8"
-  },
-  "require-dev": {
-    "mockery/mockery": "0.9.4",
-    "phpunit/phpunit": "4.8.36",
-    "mikey179/vfsStream": "^1.6",
-    "zendframework/zend-config": "2.4.8",
-    "zendframework/zend-loader": "2.4.8"
-  },
-  "autoload": {
-    "psr-4": {
-      "ZendServer\\DepH\\": "src"
+    "name": "zend-pattern/ZendServerDeploymentHelper",
+    "prefer-stable": true,
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^7.0",
+        "psr/log": "^1.0",
+        "psr/log-implementation": "^1.0",
+        "symfony/filesystem": "^3.0",
+        "symfony/process": "^3.0",
+        "zendframework/zend-diactoros": "^1.3",
+        "zendframework/zend-eventmanager": "^3.0",
+        "zendframework/zend-filter": "^2.7",
+        "zendframework/zend-servicemanager": "^3.0",
+        "roave/security-advisories": "dev-master"
+    },
+    "require-dev": {
+        "zendframework/zend-config-aggregator": "^1.0",
+        "mikey179/vfsStream": "^1.6",
+        "phpunit/phpunit": "^6.0.3",
+        "monolog/monolog": "^1.8",
+        "zendframework/zend-log": "^2.7"
+    },
+    "suggest": {
+        "zendframework/zend-config-aggregator": ""
+    },
+    "autoload": {
+        "psr-4": {
+            "ZendServer\\DepH\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ZendServerTest\\DepH\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "phpunit --colors=auto --no-coverage",
+        "test-coverage": "phpunit --colors=auto --coverage-clover clover.xml",
+        "upload-coverage": "coveralls -v"
     }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "ZendServerTest\\DepH\\": "tests/"
-    }
-  },
-  "scripts": {
-    "test": "phpunit --colors=auto --no-coverage",
-    "test-coverage": "phpunit --colors=auto --coverage-clover clover.xml",
-    "upload-coverage": "coveralls -v"
-  }
 }

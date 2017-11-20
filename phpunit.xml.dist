@@ -1,6 +1,6 @@
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="./vendor/phpunit/phpunit/phpunit.xsd"
-         bootstrap="tests/bootstrap.php"
+         bootstrap="vendor/autoload.php"
          backupGlobals="true"
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
@@ -14,25 +14,14 @@
          verbose="true"
          colors="false">
     <testsuites>
-        <testsuite name="Zend Server DepH ConfigAggregator Suite">
-            <directory>./tests/ConfigAggregator</directory>
-        </testsuite>
         <testsuite name="Zend Server DepH Deployment Suite">
             <directory>./tests/Deployment</directory>
         </testsuite>
         <testsuite name="Zend Server DepH File Suite">
             <directory>./tests/File</directory>
         </testsuite>
-        <testsuite name="Zend Server DepH Params Suite">
-            <directory>./tests/Params</directory>
-            <file phpVersion="7.0" phpVersionOperator="&lt;">./tests/Params/ParamsTestPHP5.php</file>
-            <file phpVersion="7.0" phpVersionOperator=">=">./tests/Params/ParamsTestPHP7.php</file>
-        </testsuite>
-        <testsuite name="Zend Server DepH Path Suite">
-            <directory>./tests/Path</directory>
-        </testsuite>
-        <testsuite name="Zend Server DepH SystemCall Suite">
-            <directory>./tests/SystemCall</directory>
+        <testsuite name="Zend Server DepH Pipeline Suite">
+            <directory>./tests/Pipeline</directory>
         </testsuite>
     </testsuites>
 
@@ -40,7 +29,7 @@
         <whitelist addUncoveredFilesFromWhitelist="true" processUncoveredFilesFromWhitelist="false">
             <directory suffix=".php">src</directory>
             <exclude>
-                <directory suffix=".php">tests/</directory>
+                <directory suffix=".php">tests/unit/</directory>
             </exclude>
         </whitelist>
     </filter>

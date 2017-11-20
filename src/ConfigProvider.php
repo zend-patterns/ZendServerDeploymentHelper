@@ -1,6 +1,22 @@
 <?php
+declare(strict_types=1);
+/**
+ * Zend Server Deployment Helper (https://github.com/zend-patterns/ZendServerDeploymentHelper)
+ *
+ * @link      https://github.com/zend-patterns/ZendServerDeploymentHelper for the canonical source repository
+ * @copyright https://github.com/zend-patterns/ZendServerDeploymentHelper/blob/master/COPYRIGHT.md Copyright
+ * @license   https://github.com/zend-patterns/ZendServerDeploymentHelper/blob/master/LICENSE.md New BSD License
+ */
+
 namespace ZendServer\DepH;
 
+use Psr\Log\LoggerInterface;
+use Zend\EventManager;
+
+/**
+ * Class ConfigProvider
+ * @package ZendServer\DepH
+ */
 class ConfigProvider
 {
 
@@ -9,46 +25,29 @@ class ConfigProvider
      */
     public function getDependencyConfig()
     {
-        return array(
-            'factories'    => array(
-                'ZendServer\DepH\Params\Params'         => 'ZendServer\DepH\Params\Params\ParamsFactory',
-                'ZendServer\DepH\Log\Log'               => 'ZendServer\DepH\Log\LogFactory',
-                'ZendServer\DepH\Path\Path'             => 'ZendServer\DepH\Path\PathFactory',
-                'ZendServer\DepH\Debugger\ZendDebugger' => 'ZendServer\DepH\Debugger\ZendDebuggerFactory',
-                'DB'                                    => 'ZendServer\DepH\Db\MysqliFactory',
-            ),
-            'invokables'   => array(
-                'Zend\EventManager\EventManager',
-                'Zend\EventManager\SharedEventManager',
-                'ZendServer\DepH\Deployment\Deployment',
-                'ZendServer\DepH\File\Template',
-                'ZendServer\DepH\SystemCall\Shell',
-                'ZendServer\DepH\Params\ZendServer',
-                'ZendServer\DepH\Params\Custom',
-                'ZendServer\DepH\Db\MysqliFactory',
-            ),
-            'aliases'      => array(
-                'EventManager'       => 'Zend\EventManager\EventManager',
-                'SharedEventManager' => 'Zend\EventManager\SharedEventManager',
-                'Deployment'         => 'ZendServer\DepH\Deployment\Deployment',
-                'Template'           => 'ZendServer\DepH\File\Template',
-                'Shell'              => 'ZendServer\DepH\SystemCall\Shell',
-                'ZSParams'           => 'ZendServer\DepH\Params\ZendServer',
-                'CustomParams'       => 'ZendServer\DepH\Params\Custom',
-                'MysqliFactory'      => 'ZendServer\DepH\Db\MysqliFactory',
-                'Params'             => 'ZendServer\DepH\Params\Params',
-                'Log'                => 'ZendServer\DepH\Log\Log',
-                'Path'               => 'ZendServer\DepH\Path\Path',
-                'ZendDebugger'       => 'ZendServer\DepH\Debugger\ZendDebugger',
-            ),
-            'initializers' => array(
-                'ZendServer\DepH\ServiceManager\Initializer\EventManagerInitializer',
-            ),
-            'shared'       => array(
-                'Zend\EventManager\EventManager' => false,
-                'ZendServer\DepH\File\Template'  => false,
-            ),
-        );
+        return [
+            'factories'    => [
+                Debugger\ZendDebugger::class                => Debugger\ZendDebuggerFactory::class,
+                Pipeline\MiddlewareContainerResolver::class => Pipeline\MiddlewareContainerResolverFactory::class,
+                Pipeline\Pipeline::class                    => Pipeline\PipelineFactory::class,
+            ],
+            'invokables'   => [
+                EventManager\SharedEventManager::class,
+                Deployment\Deployment::class,
+                File\Template::class,
+            ],
+            'aliases'      => [
+                'SharedEventManager' => EventManager\SharedEventManager::class,
+                'Deployment'         => Deployment\Deployment::class,
+                'Template'           => File\Template::class,
+                'Log'                => LoggerInterface::class,
+                'ZendDebugger'       => Debugger\ZendDebugger::class,
+            ],
+            'initializers' => [
+                Initializer\EventManagerInitializer::class,
+                Log\Initializer\PsrLogInitializer::class,
+            ],
+        ];
     }
 
     /**
@@ -56,9 +55,9 @@ class ConfigProvider
      */
     public function __invoke()
     {
-        return array(
+        return [
             'dependencies' => $this->getDependencyConfig(),
-        );
+        ];
     }
 
 }
