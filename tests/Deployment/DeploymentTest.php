@@ -12,6 +12,7 @@ namespace ZendServerTest\DepH\Deployment;
 
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Filesystem\Filesystem;
 use ZendServer\DepH\Deployment\Deployment;
 
 /**
@@ -25,6 +26,11 @@ class DeploymentTest extends TestCase
      * @var Deployment|\PHPUnit_Framework_MockObject_MockObject
      */
     private $deployment;
+
+    /**
+     * @var \Symfony\Component\Filesystem\Filesystem|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $fs;
 
     /**
      * @var \org\bovigo\vfs\vfsStreamDirectory
@@ -70,8 +76,10 @@ class DeploymentTest extends TestCase
         ];
         $this->rootFs = vfsStream::setup('usr', null, $structure);
 
+        $this->fs = $this->getMockBuilder(Filesystem::class)->setMethods(['symlink'])->getMock();
 
         $this->deployment = $this->getMockBuilder(Deployment::class)
+            ->setConstructorArgs([$this->fs])
             ->setMethods([
                 'getZendServerBaseDir',
                 'getApplicationBaseDir',
@@ -398,11 +406,6 @@ class DeploymentTest extends TestCase
 
     public function testMakePersitentWritableDir()
     {
-
-        if ('\\' === DIRECTORY_SEPARATOR) {
-            $this->markTestSkipped("Symlinks not supported within windows OS.");
-        }
-
         $tmpTestDir = vfsStream::url('usr/local/zend/var/apps/__default__/0/1.0.0');
 
         $appName = 'myapp';
@@ -410,6 +413,7 @@ class DeploymentTest extends TestCase
         $this->deployment->method('getWebserverGid')->willReturn(getmygid());
         $this->deployment->method('getApplicationName')->willReturn($appName);
 
+        $this->fs->expects($this->once())->method('symlink')->with("$tmpTestDir/persitentDir/$appName/myWritableDir", "$tmpTestDir/myWritableDir");
 
         $absolutePaths = $this->deployment->createPersitentApplicationDir(
             'myWritableDir',
@@ -420,15 +424,7 @@ class DeploymentTest extends TestCase
         $absoluteLinkedPath = $absolutePaths['linkedDir'];
 
         $this->assertEquals($tmpTestDir . "/persitentDir/$appName/myWritableDir", $absolutePersitentPath);
-        $this->assertEquals($$tmpTestDir . '/myWritableDir', $absoluteLinkedPath);
-
-        $myFile = $tmpTestDir . '/myWritableDir/myFile';
-        $myPersitentFile = $tmpTestDir . "/persitentDir/$appName/myWritableDir/myFile";
-        touch($myFile);
-
-        $this->assertTrue(is_file($myFile));
-        $this->assertTrue(is_file($myPersitentFile));
-
+        $this->assertEquals($tmpTestDir . '/myWritableDir', $absoluteLinkedPath);
     }
 
 }
