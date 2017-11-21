@@ -69,7 +69,8 @@
         <!--</fileset>-->
         <!--</copy>-->
 
-        <copy file="${project.root}/LICENSE.txt" tofile="${build.dir}/LICENSE.txt" />
+        <copy file="${project.root}/COPYRIGHT.md" tofile="${build.dir}/COPYRIGHT.txt" />
+        <copy file="${project.root}/LICENSE.md" tofile="${build.dir}/LICENSE.txt" />
         <copy file="${project.root}/etc/logo.gif" tofile="${build.dir}/logo.gif" />
 
         <copy todir="${build.dir}/src" tstamp="true">
