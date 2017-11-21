@@ -12,10 +12,10 @@
     <property file="./build.properties"/>
 
     <fileset id="sourcefileset" dir="${project.root}">
-        <include name="deph.php"/>
-        <include name="init_autoloader.php"/>
-        <include name="LICENSE.txt"/>
+        <include name="COPYRIGHT.md"/>
+        <include name="LICENSE.md"/>
         <include name="README.md"/>
+        <include name="deployment.xsd"/>
         <include name="src/**"/>
         <include name="vendor/**"/>
         <exclude name="**/tests/"/>
@@ -69,7 +69,8 @@
         <!--</fileset>-->
         <!--</copy>-->
 
-        <copy file="${project.root}/LICENSE.txt" tofile="${build.dir}/LICENSE.txt" />
+        <copy file="${project.root}/COPYRIGHT.md" tofile="${build.dir}/COPYRIGHT.txt" />
+        <copy file="${project.root}/LICENSE.md" tofile="${build.dir}/LICENSE.txt" />
         <copy file="${project.root}/etc/logo.gif" tofile="${build.dir}/logo.gif" />
 
         <copy todir="${build.dir}/src" tstamp="true">

@@ -8,4 +8,13 @@ declare(strict_types=1);
  * @license   https://github.com/zend-patterns/ZendServerDeploymentHelper/blob/master/LICENSE.md New BSD License
  */
 
-return require 'method_to_call.php';
+namespace ZendServer\DepH\Deployment\Exception;
+
+/**
+ * Interface ExceptionInterface
+ * @package ZendServer\DepH\Deployment\Exception
+ */
+interface ExceptionInterface
+{
+
+}

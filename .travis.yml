@@ -7,12 +7,9 @@ cache:
     - "$HOME/.local"
 
 php:
-  - 5.3
-  - 5.4
-  - 5.5
-  - 5.6
   - 7.0
   - 7.1
+  - 7.2
 
 env:
   global:
@@ -27,23 +24,22 @@ env:
 matrix:
   fast_finish: true
   include:
-    - php: 5.6
+    - php: 7.0
       env:
 #        - DEPS=latest
         - CS_CHECK=true
         - TEST_COVERAGE=true
-    - php: 5.6
+    - php: 7.0
       env:
 #        - DEPS=latest
         - BUILD_ZPK="$(if [[ $TRAVIS_PULL_REQUEST == 'false' ]]; then echo -n 'true'; else echo -n 'false'; fi)"
         - PATH="$HOME/.composer/vendor/bin:$HOME/.local/bin:$PATH"
   exclude:
-    - php: 5.6
+    - php: 7.0
 #      env: DEPS=latest
 
 before_install:
   - if [[ $TEST_COVERAGE != 'true' ]]; then phpenv config-rm xdebug.ini || return 0 ; fi
-  - travis_retry composer self-update
 
 install:
   - if [[ $DEPS == 'latest' ]]; then travis_retry composer update -vvv $COMPOSER_ARGS ; fi

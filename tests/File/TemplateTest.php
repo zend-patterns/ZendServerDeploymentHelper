@@ -1,16 +1,22 @@
 <?php
+declare(strict_types=1);
+/**
+ * Zend Server Deployment Helper (https://github.com/zend-patterns/ZendServerDeploymentHelper)
+ *
+ * @link      https://github.com/zend-patterns/ZendServerDeploymentHelper for the canonical source repository
+ * @copyright https://github.com/zend-patterns/ZendServerDeploymentHelper/blob/master/COPYRIGHT.md Copyright
+ * @license   https://github.com/zend-patterns/ZendServerDeploymentHelper/blob/master/LICENSE.md New BSD License
+ */
 
 namespace ZendServerTest\DepH\File;
 
-use Mockery;
-use PHPUnit_Framework_Error_Warning;
-use RecursiveDirectoryIterator;
-use \ZendServer\DepH\File\Template;
-use Zend\EventManager\EventManager;
-use PHPUnit_Framework_TestCase as TestCase;
+use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\TestCase;
+use ZendServer\DepH\File\Template;
 
 /**
  * Template test case.
+ * @coversDefaultClass \ZendServer\DepH\File\Template
  */
 class TemplateTest extends TestCase
 {
@@ -19,104 +25,66 @@ class TemplateTest extends TestCase
      *
      * @var Template
      */
-    private $Template;
-
-    private $tmpTestDir;
+    private $template;
 
     /**
      * Prepares the environment before running a test.
      */
     protected function setUp()
     {
-        parent::setUp();
-
-        $this->Template = new Template();
-        $em = new EventManager();
-        $this->Template->setEventManager($em);
-
-        $log = new \ZendServer\DepH\Log\Log;
-        $log->addWriter(new \Zend\Log\Writer\Mock());
-        $this->Template->setLog($log);
-
-        $this->tmpTestDir = __DIR__ . '/_files/tmp';
-
-        if (is_dir($this->tmpTestDir)) {
-            $rdIt = new RecursiveDirectoryIterator($this->tmpTestDir);
-            while($rdIt->valid()) {
-
-                if (!$rdIt->isDot()) {
-                    $filename = (string) $rdIt->key();
-                    unlink($filename);
-                }
-
-                $rdIt->next();
-            }
-            rmdir($this->tmpTestDir);
-        }
-        mkdir($this->tmpTestDir);
-    }
-
-    /**
-     * Cleans up the environment after running a test.
-     */
-    protected function tearDown()
-    {
-        $this->Template = null;
-
-        parent::tearDown();
-    }
-
-    /**
-     * Tests Template->crit()
-     *
-     * @expectedException \ZendServer\DepH\File\Exception\RuntimeException
-     */
-    public function testCrit()
-    {
-        $event = Mockery::mock('\Zend\EventManager\Event');
-        $event->shouldReceive('getParam')
-            ->with('msg')
-            ->andReturn('crit');
-
-        $this->Template->crit($event);
+        $this->template = new Template();
+        $root = vfsStream::setup('tmp');
+        $content = <<<EOF
+{{abc}}
+{{xyz}}
+{{123}}
+{{987}}
+EOF;
+        $root->addChild(vfsStream::newFile('my.tpl')->setContent($content));
     }
 
     /**
      * Tests Template->write()
+     *
+     * @covers ::write
+     * @covers ::readFile
+     * @covers ::writeFile
      */
     public function testWrite()
     {
-        $tplFilename = dirname($this->tmpTestDir) . '/my.tpl';
-        $filename = $this->tmpTestDir . '/my.txt';
-        $this->Template->write(
+
+        $tplFilename = vfsStream::url('tmp/my.tpl');
+        $filename = vfsStream::url('tmp/my.txt');
+        $this->template->write(
             $tplFilename,
             $filename,
-            array('xyz', 987),
-            array('qrs', 666)
+            [
+                'xyz' => 'qrs',
+                '987' => '666',
+            ]
         );
 
-        $res = array(
-            'abc',
-            'qrs',
-            '123',
-            '666'
-        );
+        $expectedContent = <<<EOF
+{{abc}}
+qrs
+{{123}}
+666
+EOF;
 
-        foreach (file($filename) as $key => $line) {
-            $this->assertEquals($res[$key], trim($line));
-        }
+        $this->assertSame($expectedContent, file_get_contents(vfsStream::url('tmp/my.txt')));
     }
 
     /**
      * Tests Template->write()
      *
-     * @expectedException \ZendServer\DepH\File\Exception\RuntimeException
+     * @covers ::write
+     * @expectedException \ZendServer\DepH\File\Exception\InvalidArgumentException
      */
-    public function testWrite_invalidTplFile()
+    public function testWriteThrowsExceptionIfSourceDoesNotExist()
     {
-        $tplFilename = 'idonotexist.tpl';
-        $filename = $this->tmpTestDir . '/my.txt';
-        $this->Template->write(
+        $tplFilename = vfsStream::url('tmp/idonotexist.tpl');
+        $filename = vfsStream::url('tmp/my.txt');
+        $this->template->write(
             $tplFilename,
             $filename
         );
@@ -125,54 +93,18 @@ class TemplateTest extends TestCase
     /**
      * Tests Template->write()
      *
-     * @expectedException \ZendServer\DepH\File\Exception\RuntimeException
+     * @covers ::write
+     * @covers ::writeFile
+     * @expectedException \ZendServer\DepH\File\Exception\InvalidArgumentException
      */
-    public function testWrite_invalidTargetFile()
+    public function testWriteThrowsExceptionIfDestinationFileCannotCreated()
     {
-        $tplFilename = dirname($this->tmpTestDir) . '/my.tpl';
-        $filename = $this->tmpTestDir. 'i/do/not/exist.txt';
-        PHPUnit_Framework_Error_Warning::$enabled = false;
-        $this->Template->write(
+        $tplFilename = vfsStream::url('tmp/my.tpl');
+        $filename = vfsStream::url('tmp/i/do/not/exist.txt');
+
+        $this->template->write(
             $tplFilename,
             $filename
-        );
-        PHPUnit_Framework_Error_Warning::$enabled = true;
-    }
-
-    /**
-     * Tests Template->dryRun()
-     */
-    public function testDryRun()
-    {
-        $tplFilename = dirname($this->tmpTestDir) . '/my.tpl';
-        $content = $this->Template->dryRun(
-            $tplFilename,
-            array('xyz', 987),
-            array('qrs', 666)
-        );
-
-        $res = array(
-            'abc',
-            'qrs',
-            '123',
-            '666'
-        );
-
-        foreach (explode("\n", trim($content)) as $key => $line) {
-            $this->assertEquals($res[$key], trim($line));
-        }
-    }
-
-    /**
-     * Tests Template->dryRun()
-     *
-     * @expectedException \ZendServer\DepH\File\Exception\RuntimeException
-     */
-    public function testDryRun_invalidTplFile()
-    {
-        $tplFilename = $tplFilename = 'idonotexist.tpl';
-        $this->Template->dryRun(
-            $tplFilename
         );
     }
 }

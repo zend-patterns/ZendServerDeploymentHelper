@@ -1,9 +1,19 @@
 <?php
+declare(strict_types=1);
+/**
+ * Zend Server Deployment Helper (https://github.com/zend-patterns/ZendServerDeploymentHelper)
+ *
+ * @link      https://github.com/zend-patterns/ZendServerDeploymentHelper for the canonical source repository
+ * @copyright https://github.com/zend-patterns/ZendServerDeploymentHelper/blob/master/COPYRIGHT.md Copyright
+ * @license   https://github.com/zend-patterns/ZendServerDeploymentHelper/blob/master/LICENSE.md New BSD License
+ */
 
 namespace ZendServerTest\DepH\Deployment;
 
-use \ZendServer\DepH\Deployment\Deployment;
-use PHPUnit_Framework_TestCase as TestCase;
+use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\Filesystem\Filesystem;
+use ZendServer\DepH\Deployment\Deployment;
 
 /**
  * Deployment test case.
@@ -13,9 +23,19 @@ class DeploymentTest extends TestCase
 
     /**
      *
-     * @var Deployment
+     * @var Deployment|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $Deployment;
+    private $deployment;
+
+    /**
+     * @var \Symfony\Component\Filesystem\Filesystem|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $fs;
+
+    /**
+     * @var \org\bovigo\vfs\vfsStreamDirectory
+     */
+    private $rootFs;
 
     /**
      * Prepares the environment before running a test.
@@ -24,17 +44,53 @@ class DeploymentTest extends TestCase
     {
         parent::setUp();
 
-        $this->Deployment = new Deployment();
-    }
+        $structure = [
+            'local' => [
+                'zend' => [
+                    'etc' => [
+                        'sites.d' => [
+                            'zend-default-vhost-80.conf' => '',
+                            'vhost_myapp_0.conf'         => '',
+                        ],
+                    ],
+                    'var' => [
+                        'apps' => [
+                            '__default__' => [
+                                '0' => [
+                                    '1.0.0' => [
+                                        'index.php' => '',
+                                    ],
+                                ],
+                            ],
+                            'myapp'       => [
+                                '0' => [
+                                    '1.0.0' => [
+                                        'index.php' => '',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+        $this->rootFs = vfsStream::setup('usr', null, $structure);
 
-    /**
-     * Cleans up the environment after running a test.
-     */
-    protected function tearDown()
-    {
-        $this->Deployment = null;
+        $this->fs = $this->getMockBuilder(Filesystem::class)->setMethods(['symlink'])->getMock();
 
-        parent::tearDown();
+        $this->deployment = $this->getMockBuilder(Deployment::class)
+            ->setConstructorArgs([$this->fs])
+            ->setMethods([
+                'getZendServerBaseDir',
+                'getApplicationBaseDir',
+                'getCurrentAppVersion',
+                'getApplicationName',
+                'getBaseUrl',
+                'getWebserverUid',
+                'getWebserverGid',
+            ])
+            ->getMock();
+        $this->deployment->method('getZendServerBaseDir')->willReturn(vfsStream::url('usr/local/zend'));
     }
 
     /**
@@ -44,29 +100,191 @@ class DeploymentTest extends TestCase
      */
     public function testGetCurrentActionException()
     {
-        $this->Deployment->getCurrentAction();
+        $this->deployment->getCurrentAction();
     }
 
     /**
-     * Tests Deployment->getCurrentAction()
+     * @return array
      */
-    public function testGetCurrentAction()
+    public function currentActionDataProvider()
+    {
+        $result = [];
+        foreach (Deployment::$actionScriptNames as $action => $file) {
+            $result[] = [$action, $file];
+        }
+
+        return $result;
+    }
+
+    /**
+     * @dataProvider currentActionDataProvider
+     * @runInSeparateProcess
+     *
+     * @param int    $action
+     * @param string $file
+     */
+    public function testCurrentAction(int $action, string $file)
     {
         $methodToCall = 'getCurrentAction';
-        $actual = require '_files/pre_activate.php';
+        $deployment = new Deployment();
+        $actual = require "_files/${file}";
 
-        $this->assertEquals(\ZendServer\DepH\Deployment\Deployment::PRE_ACTIVATE, $actual);
+        $this->assertEquals($action, $actual);
     }
 
     /**
-     * Tests Deployment->getCurrentActionScript()
+     * @return array
      */
-    public function testGetCurrentActionScript()
+    public function isActionDataProvider()
+    {
+        $result = [];
+        $result[] = [
+            'isPreStageAction',
+            Deployment::$actionScriptNames[Deployment::PRE_STAGE],
+            true,
+        ];
+        $result[] = [
+            'isPostStageAction',
+            Deployment::$actionScriptNames[Deployment::POST_STAGE],
+            true,
+        ];
+        $result[] = [
+            'isPreUnstageAction',
+            Deployment::$actionScriptNames[Deployment::PRE_UNSTAGE],
+            true,
+        ];
+        $result[] = [
+            'isPostUnstageAction',
+            Deployment::$actionScriptNames[Deployment::POST_UNSTAGE],
+            true,
+        ];
+        $result[] = [
+            'isPreActivateAction',
+            Deployment::$actionScriptNames[Deployment::PRE_ACTIVATE],
+            true,
+        ];
+        $result[] = [
+            'isPostActivateAction',
+            Deployment::$actionScriptNames[Deployment::POST_ACTIVATE],
+            true,
+        ];
+        $result[] = [
+            'isPreRollbackAction',
+            Deployment::$actionScriptNames[Deployment::PRE_ROLLBACK],
+            true,
+        ];
+        $result[] = [
+            'isPostRollbackAction',
+            Deployment::$actionScriptNames[Deployment::POST_ROLLBACK],
+            true,
+        ];
+        $result[] = [
+            'isPreDeactivateAction',
+            Deployment::$actionScriptNames[Deployment::PRE_DEACTIVATE],
+            true,
+        ];
+        $result[] = [
+            'isPostDeactivateAction',
+            Deployment::$actionScriptNames[Deployment::POST_DEACTIVATE],
+            true,
+        ];
+
+        $result[] = [
+            'isPreStageAction',
+            Deployment::$actionScriptNames[Deployment::POST_STAGE],
+            false,
+        ];
+        $result[] = [
+            'isPostStageAction',
+            Deployment::$actionScriptNames[Deployment::PRE_STAGE],
+            false,
+        ];
+        $result[] = [
+            'isPreUnstageAction',
+            Deployment::$actionScriptNames[Deployment::POST_UNSTAGE],
+            false,
+        ];
+        $result[] = [
+            'isPostUnstageAction',
+            Deployment::$actionScriptNames[Deployment::PRE_UNSTAGE],
+            false,
+        ];
+        $result[] = [
+            'isPreActivateAction',
+            Deployment::$actionScriptNames[Deployment::POST_ACTIVATE],
+            false,
+        ];
+        $result[] = [
+            'isPostActivateAction',
+            Deployment::$actionScriptNames[Deployment::PRE_ACTIVATE],
+            false,
+        ];
+        $result[] = [
+            'isPreRollbackAction',
+            Deployment::$actionScriptNames[Deployment::POST_ROLLBACK],
+            false,
+        ];
+        $result[] = [
+            'isPostRollbackAction',
+            Deployment::$actionScriptNames[Deployment::PRE_ROLLBACK],
+            false,
+        ];
+        $result[] = [
+            'isPreDeactivateAction',
+            Deployment::$actionScriptNames[Deployment::POST_DEACTIVATE],
+            false,
+        ];
+        $result[] = [
+            'isPostDeactivateAction',
+            Deployment::$actionScriptNames[Deployment::PRE_DEACTIVATE],
+            false,
+        ];
+
+        return $result;
+    }
+
+    /**
+     * @dataProvider isActionDataProvider
+     * @runInSeparateProcess
+     *
+     * @param string $methodToCall
+     * @param string $file
+     * @param bool   $expectedResult
+     */
+    public function testIsAction(string $methodToCall, string $file, bool $expectedResult)
+    {
+        $deployment = $this->deployment;
+        $actual = require "_files/${file}";
+
+        $this->assertEquals($expectedResult, $actual);
+    }
+
+    /**
+     * @return array
+     */
+    public function currentActionScriptDataProvider()
+    {
+        $result = [];
+        foreach (Deployment::$actionScriptNames as $file) {
+            $result[] = [$file];
+        }
+
+        return $result;
+    }
+
+    /**
+     * @dataProvider currentActionScriptDataProvider
+     * @runInSeparateProcess
+     *
+     * @param string $file
+     */
+    public function testGetCurrentActionScript(string $file)
     {
         $methodToCall = 'getCurrentActionScript';
-        $actual = require '_files/pre_activate.php';
+        $deployment = $this->deployment;
+        $actual = require "_files/${file}";
 
-        $this->assertEquals('pre_activate.php', $actual);
+        $this->assertEquals($file, $actual);
     }
 
     /**
@@ -76,121 +294,138 @@ class DeploymentTest extends TestCase
      */
     public function testGetCurrentActionScriptException()
     {
-        $this->Deployment->getCurrentActionScript();
+        $this->deployment->getCurrentActionScript();
     }
 
     /**
-     * Tests Deployment->isPreStageAction()
-     */
-    public function testIsPreStageAction()
-    {
-        $methodToCall = 'isPreStageAction';
-        $actual = require '_files/pre_activate.php';
-
-        $this->assertFalse($actual);
-
-        $actual = require '_files/pre_stage.php';
-
-        $this->assertTrue($actual);
-    }
-
-    /**
-     * Tests Deployment->isPreStageAction()
+     * @dataProvider isActionDataProvider
      *
      * @expectedException \ZendServer\DepH\Deployment\Exception\RuntimeException
      */
-    public function testIsPreStageActionException()
+    public function testIsActionThrowsException(string $method)
     {
-        $this->Deployment->isPreStageAction();
+        $this->deployment->$method();
     }
 
     /**
-     * Tests Deployment->isPostStageAction()
+     * Tests Path->getVirtualHostFile()
      */
-    public function testIsPostStageAction()
+    public function testGetVirtualHostFileDefault()
     {
-        $methodToCall = 'isPostStageAction';
-        $actual = require '_files/pre_activate.php';
 
-        $this->assertFalse($actual);
+        $vhostFileDefault = vfsStream::url('usr/local/zend/etc/sites.d/zend-default-vhost-80.conf');
 
-        $actual = require '_files/post_stage.php';
+        $this->deployment->method('getApplicationBaseDir')->willReturn(vfsStream::url('usr/local/zend/var/apps/__default__/0/1.0.0'));
+        $this->deployment->method('getCurrentAppVersion')->willReturn('1.0.0');
 
-        $this->assertTrue($actual);
+        $actual = $this->deployment->getVirtualHostFile();
+        $this->assertEquals($vhostFileDefault, $actual);
     }
 
     /**
-     * Tests Deployment->isPostStageAction()
-     *
-     * @expectedException \ZendServer\DepH\Deployment\Exception\RuntimeException
+     * Tests Path->getVirtualHostFile()
      */
-    public function testIsPostStageActionException()
+    public function testGetVirtualHostFileCustom()
     {
-        $this->Deployment->isPostStageAction();
+        $vhostFileCustom = vfsStream::url('usr/local/zend/etc/sites.d/vhost_myapp_0.conf');
+
+        $this->deployment->method('getApplicationBaseDir')->willReturn(vfsStream::url('usr/local/zend/var/apps/myapp/0/1.0.0'));
+        $this->deployment->method('getCurrentAppVersion')->willReturn('1.0.0');
+
+        $actual = $this->deployment->getVirtualHostFile();
+        $this->assertEquals($vhostFileCustom, $actual);
     }
 
     /**
-     * Tests Deployment->isPreActivateAction()
+     * Tests Path->isDefaultSite()
      */
-    public function testIsPreActivateAction()
+    public function testIsDefaultSiteYes()
     {
-        $methodToCall = 'isPreActivateAction';
-        $actual = require '_files/pre_activate.php';
 
-        $this->assertTrue($actual);
+        $this->deployment->method('getApplicationBaseDir')->willReturn(vfsStream::url('usr/local/zend/var/apps/__default__/0/1.0.0'));
+        $this->deployment->method('getCurrentAppVersion')->willReturn('1.0.0');
 
-        $actual = require '_files/post_stage.php';
-
-        $this->assertFalse($actual);
+        $this->assertTrue($this->deployment->isDefaultSite());
     }
 
     /**
-     * Tests Deployment->isPreActivateAction()
-     *
-     * @expectedException \ZendServer\DepH\Deployment\Exception\RuntimeException
+     * Tests Path->isDefaultSite()
      */
-    public function testIsPreActivateActionException()
+    public function testIsDefaultSiteNo()
     {
-        $this->Deployment->isPreActivateAction();
+        $this->deployment->method('getApplicationBaseDir')->willReturn('/usr/local/zend/var/apps/myapp/0/1.0.0');
+        $this->deployment->method('getCurrentAppVersion')->willReturn('1.0.0');
+
+        $this->assertFalse($this->deployment->isDefaultSite());
+    }
+
+    public function urlPathDataProvider()
+    {
+        return [
+            ['http:///', '/'],
+            ['http:///mypath', '/mypath'],
+            ['http://myvhost/', '/'],
+            ['http://myvhost', '/'],
+            ['http://myvhost/mypath', '/mypath'],
+        ];
     }
 
     /**
-     * Tests Deployment->isPostActivateAction()
+     * @dataProvider urlPathDataProvider
+     * Tests Path->getUrlPath()
      */
-    public function testIsPostActivateAction()
+    public function testGetUrlPath($path, $expectedResult)
     {
-        $methodToCall = 'isPostActivateAction';
-        $actual = require '_files/pre_activate.php';
-
-        $this->assertFalse($actual);
-
-        $actual = require '_files/post_activate.php';
-
-        $this->assertTrue($actual);
+        $this->deployment->method('getBaseUrl')->willReturn($path);
+        $actual = $this->deployment->getUrlPath();
+        $this->assertEquals($expectedResult, $actual);
     }
 
-    /**
-     * Tests Deployment->isPostActivateAction()
-     *
-     * @expectedException \ZendServer\DepH\Deployment\Exception\RuntimeException
-     */
-    public function testIsPostActivateActionException()
+    public function testGetAppsDir()
     {
-        $this->Deployment->isPostActivateAction();
+        $actual = $this->deployment->getAppsDir();
+        $this->assertEquals(vfsStream::url('usr/local/zend/var/apps'), $actual);
     }
 
-    /**
-     * Tests Deployment->isUpdate()
-     */
-    public function testIsUpdate()
+    public function testMakeWritableDir()
     {
-        $actual = $this->Deployment->isUpdate();
-        $this->assertFalse($actual);
-        
-        putenv('ZS_PREVIOUS_APP_VERSION=1');
-        
-        $actual = $this->Deployment->isUpdate();
-        $this->assertTrue($actual);
+        $this->deployment->method('getApplicationBaseDir')->willReturn(vfsStream::url('usr/local/zend/var/apps/__default__/0/1.0.0'));
+        $this->deployment->method('getWebserverUid')->willReturn(getmyuid());
+        $this->deployment->method('getWebserverGid')->willReturn(getmygid());
+
+        $absolutePath = $this->deployment->createWriteableApplicationDir('myWritableDir');
+
+        $this->assertEquals(vfsStream::url('usr/local/zend/var/apps/__default__/0/1.0.0') . '/myWritableDir',
+            $absolutePath);
+
+        $myFile = vfsStream::url('usr/local/zend/var/apps/__default__/0/1.0.0') . '/myWritableDir/myFile';
+        touch($myFile);
+
+        $this->assertTrue(is_file($myFile));
     }
+
+    public function testMakePersitentWritableDir()
+    {
+        $tmpTestDir = vfsStream::url('usr/local/zend/var/apps/__default__/0/1.0.0');
+
+        $appName = 'myapp';
+        $this->deployment->method('getApplicationBaseDir')->willReturn($tmpTestDir);
+        $this->deployment->method('getWebserverGid')->willReturn(getmygid());
+        $this->deployment->method('getApplicationName')->willReturn($appName);
+
+        $this->fs->expects($this->once())->method('symlink')->with("$tmpTestDir/persitentDir/$appName/myWritableDir", "$tmpTestDir/myWritableDir");
+
+        $absolutePaths = $this->deployment->createPersitentApplicationDir(
+            'myWritableDir',
+            $tmpTestDir . '/persitentDir'
+        );
+
+        $absolutePersitentPath = $absolutePaths['persitentDir'];
+        $absoluteLinkedPath = $absolutePaths['linkedDir'];
+
+        $this->assertEquals($tmpTestDir . "/persitentDir/$appName/myWritableDir", $absolutePersitentPath);
+        $this->assertEquals($tmpTestDir . '/myWritableDir', $absoluteLinkedPath);
+    }
+
 }
 
